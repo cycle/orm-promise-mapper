@@ -23,7 +23,7 @@ Feel free to propose any ideas related to architecture, docs (___docs are never 
 
 ## Critical/Security Issues
 If you found something which shouldn't be there or a bug which opens a security hole please let me know immediately by email
-[wolfy-j@spiralscout.com](mailto:team@spiralscout.com)
+[team@spiralscout.com](mailto:team@spiralscout.com)
 
 ## Official Support
 Cycle ORM and all related components are maintained by [Spiral Scout](https://spiralscout.com/).
