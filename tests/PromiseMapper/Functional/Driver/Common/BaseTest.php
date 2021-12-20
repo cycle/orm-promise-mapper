@@ -14,6 +14,7 @@ use Cycle\ORM\Config\RelationConfig;
 use Cycle\ORM\EntityManager;
 use Cycle\ORM\PromiseMapper\Tests\Traits\Loggable;
 use Cycle\ORM\Factory;
+use Cycle\ORM\Reference\ReferenceInterface;
 use Cycle\ORM\SchemaInterface;
 use Cycle\ORM\ORM;
 use PHPUnit\Framework\TestCase;
@@ -28,6 +29,7 @@ abstract class BaseTest extends TestCase
     protected ?DatabaseManager $dbal = null;
     protected ?ORM $orm = null;
     protected int $numWrites = 0;
+    protected int $numReads = 0;
     private static array $driverCache = [];
 
     public function setUp(): void
@@ -134,6 +136,14 @@ abstract class BaseTest extends TestCase
         $this->numWrites = self::$logger->countWriteQueries();
     }
 
+    /**
+     * Start counting read queries.
+     */
+    public function captureReadQueries(): void
+    {
+        $this->numReads = self::$logger->countReadQueries();
+    }
+
     public function assertNumWrites(int $numWrites): void
     {
         $queries = self::$logger->countWriteQueries() - $this->numWrites;
@@ -145,5 +155,28 @@ abstract class BaseTest extends TestCase
                 "Number of write SQL queries do not match, expected {$numWrites} got {$queries}."
             );
         }
+    }
+
+    public function assertNumReads(int $numReads): void
+    {
+        $queries = self::$logger->countReadQueries() - $this->numReads;
+
+        if (!empty(self::$config['strict'])) {
+            $this->assertSame(
+                $numReads,
+                $queries,
+                "Number of read SQL queries do not match, expected {$numReads} got {$queries}."
+            );
+        }
+    }
+
+    /**
+     * Extract all data from Entity using mapper
+     *
+     * @return array<string, mixed|ReferenceInterface>
+     */
+    protected function extractEntity(object $entity): array
+    {
+        return $this->orm->getMapper($entity)->extract($entity);
     }
 }

@@ -22,6 +22,11 @@ class TestLogger implements LoggerInterface
         return $this->countWrites;
     }
 
+    public function countReadQueries(): int
+    {
+        return $this->countReads;
+    }
+
     public function log($level, $message, array $context = []): void
     {
         if (!empty($context['elapsed'])) {
