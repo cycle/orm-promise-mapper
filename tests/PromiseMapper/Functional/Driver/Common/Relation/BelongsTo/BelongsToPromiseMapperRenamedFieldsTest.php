@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Cycle\ORM\PromiseMapper\Tests\Functional\Driver\Common\Relation\BelongsTo;
 
-use Cycle\ORM\Mapper\PromiseMapper;
+use Cycle\ORM\PromiseMapper\PromiseMapper;
 use Cycle\ORM\Relation;
 use Cycle\ORM\Schema;
 use Cycle\ORM\PromiseMapper\Tests\Fixtures\Profile;
