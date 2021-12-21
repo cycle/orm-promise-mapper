@@ -20,7 +20,7 @@
     </php>
 
     <testsuites>
-        <testsuite name="Cycle: Cycle ORM PromiseMapper">
+        <testsuite name="Cycle ORM PromiseMapper">
             <directory>./tests/</directory>
         </testsuite>
     </testsuites>
