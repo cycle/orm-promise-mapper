@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Cycle\ORM\PromiseMapper\Tests\Functional\Driver\Common\Relation\HasMany;
 
 use Cycle\ORM\Heap\Heap;
-use Cycle\ORM\Mapper\PromiseMapper;
+use Cycle\ORM\PromiseMapper\PromiseMapper;
 use Cycle\ORM\Reference\Promise;
 use Cycle\ORM\Reference\ReferenceInterface;
 use Cycle\ORM\Relation;
