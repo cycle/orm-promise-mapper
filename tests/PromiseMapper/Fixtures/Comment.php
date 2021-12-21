@@ -9,5 +9,5 @@ class Comment
 {
     public ?int $id = null;
     public ?string $message = null;
-    public User $user;
+    public ?User $user = null;
 }
