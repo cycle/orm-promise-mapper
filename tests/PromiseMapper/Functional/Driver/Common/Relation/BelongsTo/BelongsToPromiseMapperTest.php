@@ -134,15 +134,15 @@ abstract class BelongsToPromiseMapperTest extends BaseTest
         $userA->resolve();
         $userB->resolve();
 
-        $this->assertInstanceOf(User::class, $userA->getCollection());
-        $this->assertNull($userB->getCollection());
+        $this->assertInstanceOf(User::class, $userA->fetch());
+        $this->assertNull($userB->fetch());
 
         $this->captureReadQueries();
-        $this->assertSame($userA->getCollection(), $userA->getCollection());
-        $this->assertNull($userB->getCollection());
+        $this->assertSame($userA->fetch(), $userA->fetch());
+        $this->assertNull($userB->fetch());
         $this->assertNumReads(0);
 
-        $this->assertEquals('hello@world.com', $userA->getCollection()->email);
+        $this->assertEquals('hello@world.com', $userA->fetch()->email);
     }
 
     public function testFetchPromisesFromHeap(): void
@@ -169,16 +169,16 @@ abstract class BelongsToPromiseMapperTest extends BaseTest
         (new Select($this->orm, User::class))->fetchAll();
 
         $this->captureReadQueries();
-        $this->assertInstanceOf(User::class, $userA->getCollection());
-        $this->assertSame($userA->getValue(), $userA->getCollection());
+        $this->assertInstanceOf(User::class, $userA->fetch());
+        $this->assertSame($userA->getValue(), $userA->fetch());
         $this->assertNumReads(0);
 
         // invalid object can't be cached
         $this->captureReadQueries();
-        $this->assertNull($userB->getCollection());
+        $this->assertNull($userB->fetch());
         $this->assertNumReads(1);
 
-        $this->assertEquals('hello@world.com', $userA->getCollection()->email);
+        $this->assertEquals('hello@world.com', $userA->fetch()->email);
     }
 
     public function testNoWriteOperations(): void
@@ -199,7 +199,7 @@ abstract class BelongsToPromiseMapperTest extends BaseTest
             ->wherePK(1)->fetchOne();
         /** @var Promise $promise */
         $promise = $p->user;
-        $promise->getCollection()->balance = 400;
+        $promise->fetch()->balance = 400;
 
         $this->captureWriteQueries();
         $this->captureReadQueries();
@@ -213,6 +213,6 @@ abstract class BelongsToPromiseMapperTest extends BaseTest
         /** @var Promise $promise */
         $promise = $p->user;
 
-        $this->assertSame(400.0, $promise->getCollection()->balance);
+        $this->assertSame(400.0, $promise->fetch()->balance);
     }
 }
