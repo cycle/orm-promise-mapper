@@ -160,7 +160,7 @@ abstract class PromiseMapperTest extends BaseTest
         $this->assertEquals(200.0, $result[1]->balance);
 
         $this->assertInstanceOf(Promise::class, $result[0]->comments);
-        $this->assertIsArray($result[0]->comments->getCollection());
+        $this->assertIsArray($result[0]->comments->fetch());
     }
 
     public function testFetchOne(): void
@@ -174,7 +174,7 @@ abstract class PromiseMapperTest extends BaseTest
         $this->assertEquals(100.0, $result->balance);
 
         $this->assertInstanceOf(Promise::class, $result->comments);
-        $this->assertIsArray($result->comments->getCollection());
+        $this->assertIsArray($result->comments->fetch());
     }
 
     public function testFetchSame(): void

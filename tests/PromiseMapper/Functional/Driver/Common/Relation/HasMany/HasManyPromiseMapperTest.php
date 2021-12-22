@@ -232,7 +232,7 @@ abstract class HasManyPromiseMapperTest extends BaseTest
 
         /** @var Promise $p */
         $p = $e->comments;
-        $e->comments = $p->getCollection();
+        $e->comments = $p->fetch();
         $this->assertCount(3, $e->comments);
 
         $e->comments = array_values(array_filter($e->comments, fn(Comment $comment) => $comment->id !== 2));
@@ -244,7 +244,7 @@ abstract class HasManyPromiseMapperTest extends BaseTest
 
         /** @var Promise $p */
         $p = $e->comments;
-        $e->comments = $p->getCollection();
+        $e->comments = $p->fetch();
         $this->assertCount(2, $e->comments);
 
         $this->assertSame('msg 1', $e->comments[0]->message);
@@ -258,7 +258,7 @@ abstract class HasManyPromiseMapperTest extends BaseTest
 
         /** @var Promise $p */
         $p = $e->comments;
-        $e->comments = $p->getCollection();
+        $e->comments = $p->fetch();
 
         $e->comments = array_values(array_filter($e->comments, fn(Comment $comment) => $comment->id !== 2));
 
@@ -273,7 +273,7 @@ abstract class HasManyPromiseMapperTest extends BaseTest
 
         /** @var Promise $p */
         $p = $e->comments;
-        $e->comments = $p->getCollection();
+        $e->comments = $p->fetch();
 
         $this->assertCount(3, $e->comments);
         $this->assertSame('msg 1', $e->comments[0]->message);
@@ -291,10 +291,10 @@ abstract class HasManyPromiseMapperTest extends BaseTest
 
         /** @var Promise $p */
         $p = $a->comments;
-        $a->comments = $p->getCollection();
+        $a->comments = $p->fetch();
         /** @var Promise $p */
         $p = $b->comments;
-        $b->comments = $p->getCollection();
+        $b->comments = $p->fetch();
 
         $this->assertCount(3, $a->comments);
         $this->assertCount(0, $b->comments);
