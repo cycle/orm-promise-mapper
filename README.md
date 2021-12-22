@@ -20,6 +20,7 @@ composer require cycle/orm-promise-mapper
 
 ```php
 use Cycle\Annotated\Annotation\Entity;
+use Cycle\Annotated\Annotation\Column;
 use Cycle\Annotated\Annotation\Relation\BelongsTo;
 use Cycle\Annotated\Annotation\Relation\HasMany;
 use Cycle\ORM\Reference\ReferenceInterface;
