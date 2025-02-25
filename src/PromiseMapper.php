@@ -40,6 +40,7 @@ class PromiseMapper extends DatabaseMapper
         $this->instantiator = new Instantiator\Instantiator();
     }
 
+    #[\Override]
     public function init(array $data, ?string $role = null): object
     {
         /** @psalm-var class-string $class */
@@ -48,6 +49,7 @@ class PromiseMapper extends DatabaseMapper
         return $this->instantiator->instantiate($class);
     }
 
+    #[\Override]
     public function hydrate(object $entity, array $data): object
     {
         // Force searching related entities in the Heap
@@ -67,6 +69,7 @@ class PromiseMapper extends DatabaseMapper
         return $this->hydrator->hydrate($data, $entity);
     }
 
+    #[\Override]
     public function extract(object $entity): array
     {
         return $this->hydrator->extract($entity);
@@ -75,6 +78,7 @@ class PromiseMapper extends DatabaseMapper
     /**
      * Get entity columns.
      */
+    #[\Override]
     public function fetchFields(object $entity): array
     {
         $values = \array_intersect_key($this->extract($entity), $this->columns + $this->parentColumns);
@@ -82,6 +86,7 @@ class PromiseMapper extends DatabaseMapper
         return $values + $this->getDiscriminatorValues($entity);
     }
 
+    #[\Override]
     public function fetchRelations(object $entity): array
     {
         return \array_intersect_key(
