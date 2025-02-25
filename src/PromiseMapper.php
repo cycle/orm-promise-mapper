@@ -40,7 +40,7 @@ class PromiseMapper extends DatabaseMapper
         $this->instantiator = new Instantiator\Instantiator();
     }
 
-    public function init(array $data, string $role = null): object
+    public function init(array $data, ?string $role = null): object
     {
         /** @psalm-var class-string $class */
         $class = $this->resolveClass($data, $role);
