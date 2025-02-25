@@ -1,6 +1,7 @@
 {
     "name": "cycle/orm-promise-mapper",
     "type": "library",
+    "description": "Promise mapper for Cycle ORM",
     "require": {
         "php": ">=8.0",
         "cycle/orm": "^2.9",
