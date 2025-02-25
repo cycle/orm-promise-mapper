@@ -33,7 +33,7 @@ abstract class BelongsToPromiseMapperRenamedFieldsTest extends BelongsToPromiseM
             ['email', 'balance'],
             [
                 ['hello@world.com', 100],
-            ]
+            ],
         );
 
         $this->getDatabase()->table('profile')->insertMultiple(
@@ -42,7 +42,7 @@ abstract class BelongsToPromiseMapperRenamedFieldsTest extends BelongsToPromiseM
                 [1, 'image.png'],
                 [2, 'second.png'],
                 [null, 'third.png'],
-            ]
+            ],
         );
 
         $this->orm = $this->withSchema(new Schema([

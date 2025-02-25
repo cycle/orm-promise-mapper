@@ -17,34 +17,11 @@ class PromiseMapperTest extends TestCase
 {
     private PromiseMapper $mapper;
 
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $orm = new ORM(
-            $this->createMock(FactoryInterface::class),
-            new Schema([
-                User::class => [
-                    SchemaInterface::ENTITY => User::class,
-                    SchemaInterface::MAPPER => PromiseMapper::class,
-                    SchemaInterface::DATABASE => 'default',
-                    SchemaInterface::TABLE => 'user',
-                    SchemaInterface::PRIMARY_KEY => 'id',
-                    SchemaInterface::COLUMNS => ['id', 'email', 'balance'],
-                    SchemaInterface::SCHEMA => [],
-                    SchemaInterface::RELATIONS => [],
-                ],
-            ])
-        );
-
-        $this->mapper = new PromiseMapper($orm, User::class);
-    }
-
     public function testInit(): void
     {
         $this->assertInstanceOf(
             User::class,
-            $this->mapper->init(['id' => 1, 'email' => 'test@email.com', 'balance' => 100], User::class)
+            $this->mapper->init(['id' => 1, 'email' => 'test@email.com', 'balance' => 100], User::class),
         );
     }
 
@@ -54,7 +31,7 @@ class PromiseMapperTest extends TestCase
 
         $this->assertInstanceOf(
             User::class,
-            $this->mapper->init(['id' => 1, 'email' => 'test@email.com', 'balance' => 100], 'foo')
+            $this->mapper->init(['id' => 1, 'email' => 'test@email.com', 'balance' => 100], 'foo'),
         );
     }
 
@@ -91,5 +68,28 @@ class PromiseMapperTest extends TestCase
         $data = $this->mapper->extract($user);
 
         $this->assertSame(['id' => 1, 'email' => 'test@email.com', 'balance' => 100.0, 'comments' => []], $data);
+    }
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $orm = new ORM(
+            $this->createMock(FactoryInterface::class),
+            new Schema([
+                User::class => [
+                    SchemaInterface::ENTITY => User::class,
+                    SchemaInterface::MAPPER => PromiseMapper::class,
+                    SchemaInterface::DATABASE => 'default',
+                    SchemaInterface::TABLE => 'user',
+                    SchemaInterface::PRIMARY_KEY => 'id',
+                    SchemaInterface::COLUMNS => ['id', 'email', 'balance'],
+                    SchemaInterface::SCHEMA => [],
+                    SchemaInterface::RELATIONS => [],
+                ],
+            ]),
+        );
+
+        $this->mapper = new PromiseMapper($orm, User::class);
     }
 }

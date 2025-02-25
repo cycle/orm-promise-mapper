@@ -9,6 +9,7 @@ class Profile
 {
     public int $id;
     public string $image;
+
     /** @var User|null */
     public $user;
 }

@@ -13,7 +13,6 @@ class TestLogger implements LoggerInterface
     use LoggerTrait;
 
     private bool $display = false;
-
     private int $countWrites = 0;
     private int $countReads = 0;
 
@@ -30,11 +29,11 @@ class TestLogger implements LoggerInterface
     public function log($level, $message, array $context = []): void
     {
         if (!empty($context['elapsed'])) {
-            $sql = strtolower($message);
+            $sql = \strtolower($message);
             if (
-                strpos($sql, 'insert') === 0 ||
-                strpos($sql, 'update') === 0 ||
-                strpos($sql, 'delete') === 0
+                \strpos($sql, 'insert') === 0 ||
+                \strpos($sql, 'update') === 0 ||
+                \strpos($sql, 'delete') === 0
             ) {
                 $this->countWrites++;
             } else {
@@ -52,7 +51,7 @@ class TestLogger implements LoggerInterface
             echo " \n! \033[31m" . $message . "\033[0m";
         } elseif ($level == LogLevel::ALERT) {
             echo " \n! \033[35m" . $message . "\033[0m";
-        } elseif (strpos($message, 'SHOW') === 0) {
+        } elseif (\strpos($message, 'SHOW') === 0) {
             echo " \n> \033[34m" . $message . "\033[0m";
         } else {
             if ($this->isPostgresSystemQuery($message)) {
@@ -61,9 +60,9 @@ class TestLogger implements LoggerInterface
                 return;
             }
 
-            if (strpos($message, 'SELECT') === 0) {
+            if (\strpos($message, 'SELECT') === 0) {
                 echo " \n> \033[32m" . $message . "\033[0m";
-            } elseif (strpos($message, 'INSERT') === 0) {
+            } elseif (\strpos($message, 'INSERT') === 0) {
                 echo " \n> \033[36m" . $message . "\033[0m";
             } else {
                 echo " \n> \033[33m" . $message . "\033[0m";
@@ -83,14 +82,14 @@ class TestLogger implements LoggerInterface
 
     protected function isPostgresSystemQuery(string $query): bool
     {
-        $query = strtolower($query);
+        $query = \strtolower($query);
         return (bool) (
-            strpos($query, 'tc.constraint_name') ||
-            strpos($query, 'pg_indexes') ||
-            strpos($query, 'tc.constraint_name') ||
-            strpos($query, 'pg_constraint') ||
-            strpos($query, 'information_schema') ||
-            strpos($query, 'pg_class')
+            \strpos($query, 'tc.constraint_name') ||
+            \strpos($query, 'pg_indexes') ||
+            \strpos($query, 'tc.constraint_name') ||
+            \strpos($query, 'pg_constraint') ||
+            \strpos($query, 'information_schema') ||
+            \strpos($query, 'pg_class')
         );
     }
 }

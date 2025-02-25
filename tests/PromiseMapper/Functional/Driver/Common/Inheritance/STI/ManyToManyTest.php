@@ -15,34 +15,11 @@ use Cycle\ORM\Select;
 use Cycle\ORM\PromiseMapper\Tests\Fixtures\Inheritance\RbacItemAbstract;
 use Cycle\ORM\PromiseMapper\Tests\Fixtures\Inheritance\RbacPermission;
 use Cycle\ORM\PromiseMapper\Tests\Fixtures\Inheritance\RbacRole;
-use stdClass;
 
 abstract class ManyToManyTest extends StiBaseTest
 {
     protected const PARENT_MAPPER = PromiseMapper::class;
     protected const CHILD_MAPPER = StdMapper::class;
-
-    public function setUp(): void
-    {
-        parent::setUp();
-
-        $this->makeTable('rbac_item', [
-            'name' => 'string,primary',
-            'description' => 'string,nullable',
-            '_type' => 'string,nullable',
-        ]);
-
-        $this->makeTable('rbac_item_inheritance', [
-            'id' => 'primary',
-            'parent' => 'string',
-            'child' => 'string',
-        ]);
-
-        $this->makeFK('rbac_item_inheritance', 'parent', 'rbac_item', 'name', 'NO ACTION', 'NO ACTION');
-        $this->makeFK('rbac_item_inheritance', 'child', 'rbac_item', 'name', 'NO ACTION', 'NO ACTION');
-
-        $this->withSchema(new Schema($this->getSchemaArray()));
-    }
 
     public function testStore(): void
     {
@@ -91,11 +68,11 @@ abstract class ManyToManyTest extends StiBaseTest
             ->load('parents')
             ->wherePK('writeUser')->fetchOne();
 
-        $fetchedRole->children = array_values(
-            array_filter($fetchedRole->children, fn(RbacPermission $perm) => $perm->name !== 'writeUser')
+        $fetchedRole->children = \array_values(
+            \array_filter($fetchedRole->children, static fn(RbacPermission $perm) => $perm->name !== 'writeUser'),
         );
-        $fetchedPermission->parents = array_values(
-            array_filter($fetchedRole->children, fn(RbacRole $role) => $role->name !== 'superAdmin')
+        $fetchedPermission->parents = \array_values(
+            \array_filter($fetchedRole->children, static fn(RbacRole $role) => $role->name !== 'superAdmin'),
         );
 
         $this->save($fetchedRole);
@@ -113,7 +90,7 @@ abstract class ManyToManyTest extends StiBaseTest
     {
         $this->assertInstanceOf(RbacRole::class, $this->orm->make('rbac_role'));
         $this->assertInstanceOf(RbacPermission::class, $this->orm->make('rbac_permission'));
-        $this->assertInstanceOf(stdClass::class, $this->orm->make('rbac_item_inheritance'));
+        $this->assertInstanceOf(\stdClass::class, $this->orm->make('rbac_item_inheritance'));
     }
 
     public function testMakeUndefinedChildRole(): void
@@ -157,6 +134,28 @@ abstract class ManyToManyTest extends StiBaseTest
         self::assertSame('updated description', $fetchedRole->description);
 
         $this->orm = $this->orm->with(heap: new Heap());
+    }
+
+    public function setUp(): void
+    {
+        parent::setUp();
+
+        $this->makeTable('rbac_item', [
+            'name' => 'string,primary',
+            'description' => 'string,nullable',
+            '_type' => 'string,nullable',
+        ]);
+
+        $this->makeTable('rbac_item_inheritance', [
+            'id' => 'primary',
+            'parent' => 'string',
+            'child' => 'string',
+        ]);
+
+        $this->makeFK('rbac_item_inheritance', 'parent', 'rbac_item', 'name', 'NO ACTION', 'NO ACTION');
+        $this->makeFK('rbac_item_inheritance', 'child', 'rbac_item', 'name', 'NO ACTION', 'NO ACTION');
+
+        $this->withSchema(new Schema($this->getSchemaArray()));
     }
 
     protected function getSchemaArray(): array

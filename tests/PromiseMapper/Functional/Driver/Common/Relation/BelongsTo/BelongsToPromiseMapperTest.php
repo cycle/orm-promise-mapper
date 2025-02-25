@@ -20,74 +20,6 @@ abstract class BelongsToPromiseMapperTest extends BaseTest
 {
     use TableTrait;
 
-    public function setUp(): void
-    {
-        parent::setUp();
-
-        $this->makeTable('user', [
-            'id' => 'primary',
-            'email' => 'string',
-            'balance' => 'float',
-        ]);
-
-        $this->makeTable('profile', [
-            'id' => 'primary',
-            'user_id' => 'integer,null',
-            'image' => 'string',
-        ]);
-
-        $this->getDatabase()->table('user')->insertMultiple(
-            ['email', 'balance'],
-            [
-                ['hello@world.com', 100],
-            ]
-        );
-
-        $this->getDatabase()->table('profile')->insertMultiple(
-            ['user_id', 'image'],
-            [
-                [1, 'image.png'],
-                [2, 'second.png'],
-                [null, 'third.png'],
-            ]
-        );
-
-        $this->orm = $this->withSchema(new Schema([
-            User::class => [
-                Schema::ROLE => 'user',
-                Schema::MAPPER => PromiseMapper::class,
-                Schema::DATABASE => 'default',
-                Schema::TABLE => 'user',
-                Schema::PRIMARY_KEY => 'id',
-                Schema::COLUMNS => ['id', 'email', 'balance'],
-                Schema::SCHEMA => [],
-                Schema::RELATIONS => [],
-            ],
-            Profile::class => [
-                Schema::ROLE => 'profile',
-                Schema::MAPPER => PromiseMapper::class,
-                Schema::DATABASE => 'default',
-                Schema::TABLE => 'profile',
-                Schema::PRIMARY_KEY => 'id',
-                Schema::COLUMNS => ['id', 'user_id', 'image'],
-                Schema::SCHEMA => [],
-                Schema::RELATIONS => [
-                    'user' => [
-                        Relation::TYPE => Relation::BELONGS_TO,
-                        Relation::TARGET => User::class,
-                        Relation::LOAD => Relation::LOAD_PROMISE,
-                        Relation::SCHEMA => [
-                            Relation::CASCADE => true,
-                            Relation::INNER_KEY => 'user_id',
-                            Relation::OUTER_KEY => 'id',
-                            Relation::NULLABLE => true,
-                        ],
-                    ],
-                ],
-            ],
-        ]));
-    }
-
     public function testFetchRelation(): void
     {
         $selector = new Select($this->orm, Profile::class);
@@ -214,5 +146,73 @@ abstract class BelongsToPromiseMapperTest extends BaseTest
         $promise = $p->user;
 
         $this->assertSame(400.0, $promise->fetch()->balance);
+    }
+
+    public function setUp(): void
+    {
+        parent::setUp();
+
+        $this->makeTable('user', [
+            'id' => 'primary',
+            'email' => 'string',
+            'balance' => 'float',
+        ]);
+
+        $this->makeTable('profile', [
+            'id' => 'primary',
+            'user_id' => 'integer,null',
+            'image' => 'string',
+        ]);
+
+        $this->getDatabase()->table('user')->insertMultiple(
+            ['email', 'balance'],
+            [
+                ['hello@world.com', 100],
+            ],
+        );
+
+        $this->getDatabase()->table('profile')->insertMultiple(
+            ['user_id', 'image'],
+            [
+                [1, 'image.png'],
+                [2, 'second.png'],
+                [null, 'third.png'],
+            ],
+        );
+
+        $this->orm = $this->withSchema(new Schema([
+            User::class => [
+                Schema::ROLE => 'user',
+                Schema::MAPPER => PromiseMapper::class,
+                Schema::DATABASE => 'default',
+                Schema::TABLE => 'user',
+                Schema::PRIMARY_KEY => 'id',
+                Schema::COLUMNS => ['id', 'email', 'balance'],
+                Schema::SCHEMA => [],
+                Schema::RELATIONS => [],
+            ],
+            Profile::class => [
+                Schema::ROLE => 'profile',
+                Schema::MAPPER => PromiseMapper::class,
+                Schema::DATABASE => 'default',
+                Schema::TABLE => 'profile',
+                Schema::PRIMARY_KEY => 'id',
+                Schema::COLUMNS => ['id', 'user_id', 'image'],
+                Schema::SCHEMA => [],
+                Schema::RELATIONS => [
+                    'user' => [
+                        Relation::TYPE => Relation::BELONGS_TO,
+                        Relation::TARGET => User::class,
+                        Relation::LOAD => Relation::LOAD_PROMISE,
+                        Relation::SCHEMA => [
+                            Relation::CASCADE => true,
+                            Relation::INNER_KEY => 'user_id',
+                            Relation::OUTER_KEY => 'id',
+                            Relation::NULLABLE => true,
+                        ],
+                    ],
+                ],
+            ],
+        ]));
     }
 }
