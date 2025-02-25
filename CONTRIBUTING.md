@@ -13,20 +13,20 @@ Please make sure that the following requirements are satisfied before submitting
 To test Cycle ORM PromiseMapper locally, download the `cycle/orm-promise-mapper` repository and start docker containers inside the tests folder:
 
 ```bash
-$ cd tests/
-$ docker-composer up
+cd tests/
+docker composer up
 ```
 
 To run full test suite:
 
 ```bash
-$ ./vendor/bin/phpunit
+./vendor/bin/phpunit
 ```
 
 To run quick test suite:
 
 ```bash
-$ ./vendor/bin/phpunit --group driver-sqlite
+./vendor/bin/phpunit --group driver-sqlite
 ```
 
 ## Help Needed In
