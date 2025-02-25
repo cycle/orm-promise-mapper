@@ -6,14 +6,14 @@ use Cycle\Database;
 use Cycle\ORM\PromiseMapper\Tests\Functional\Driver\Common\BaseTest;
 
 // phpcs:disable
-define('SPIRAL_INITIAL_TIME', microtime(true));
+\define('SPIRAL_INITIAL_TIME', \microtime(true));
 
-error_reporting(E_ALL | E_STRICT);
-ini_set('display_errors', '1');
-mb_internal_encoding('UTF-8');
+\error_reporting(E_ALL | E_STRICT);
+\ini_set('display_errors', '1');
+\mb_internal_encoding('UTF-8');
 
 //Composer
-require dirname(__DIR__) . '/vendor/autoload.php';
+require \dirname(__DIR__) . '/vendor/autoload.php';
 
 $drivers = [
     'sqlite'    => new Database\Config\SQLiteDriverConfig(
@@ -27,7 +27,7 @@ $drivers = [
             user: 'root',
             password: 'YourStrong!Passw0rd',
         ),
-        queryCache: true
+        queryCache: true,
     ),
     'postgres' => new Database\Config\PostgresDriverConfig(
         connection: new Database\Config\Postgres\TcpConnectionConfig(
@@ -49,15 +49,16 @@ $drivers = [
             user: 'SA',
             password: 'YourStrong!Passw0rd',
         ),
-        queryCache: true
+        queryCache: true,
     ),
 ];
 
-$db = getenv('DB') ?: null;
+$db = \getenv('DB') ?: null;
 BaseTest::$config = [
     'strict' => true,
-    'debug' => getenv('DB_DEBUG') ?: false,
-        ] + ($db === null
+    'debug' => \getenv('DB_DEBUG') ?: false,
+] + (
+    $db === null
         ? $drivers
-        : array_intersect_key($drivers, array_flip((array)$db))
-    );
+        : \array_intersect_key($drivers, \array_flip((array) $db))
+);

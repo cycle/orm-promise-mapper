@@ -4,6 +4,4 @@ declare(strict_types=1);
 
 namespace Cycle\ORM\PromiseMapper\Tests\Fixtures\Inheritance;
 
-class RbacPermission extends RbacItemAbstract
-{
-}
+class RbacPermission extends RbacItemAbstract {}

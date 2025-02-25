@@ -21,82 +21,6 @@ abstract class PromiseMapperTest extends BaseTest
 {
     use TableTrait;
 
-    public function setUp(): void
-    {
-        parent::setUp();
-
-        $this->makeTable(
-            'users',
-            [
-                'id' => 'primary',
-                'email' => 'string',
-                'balance' => 'float,nullable',
-            ]
-        );
-
-        $this->makeTable(
-            'comments',
-            [
-                'id' => 'primary',
-                'message' => 'string',
-                'user_id' => 'int',
-            ]
-        );
-
-        $this->getDatabase()->table('users')->insertMultiple(
-            ['email', 'balance'],
-            [
-                ['hello@world.com', 100],
-                ['another@world.com', 200],
-            ]
-        );
-
-        $this->getDatabase()->table('comments')->insertMultiple(
-            ['message', 'user_id'],
-            [
-                ['Comment 1', 1],
-                ['Comment 2', 1],
-            ]
-        );
-
-        $this->orm = $this->withSchema(
-            new Schema(
-                [
-                    User::class => [
-                        Schema::ROLE => 'user',
-                        Schema::MAPPER => PromiseMapper::class,
-                        Schema::DATABASE => 'default',
-                        Schema::TABLE => 'users',
-                        Schema::PRIMARY_KEY => 'id',
-                        Schema::COLUMNS => ['id', 'email', 'balance'],
-                        Schema::TYPECAST => ['id' => 'int', 'balance' => 'float'],
-                        Schema::SCHEMA => [],
-                        Schema::RELATIONS => [
-                            'comments' => [
-                                Relation::TYPE => Relation::HAS_MANY,
-                                Relation::TARGET => 'comment',
-                                Relation::SCHEMA => [
-                                    Relation::CASCADE => true,
-                                    Relation::INNER_KEY => 'id',
-                                    Relation::OUTER_KEY => 'user_id',
-                                ],
-                            ],
-                        ],
-                    ],
-                    'comment' => [
-                        Schema::MAPPER => StdMapper::class,
-                        Schema::DATABASE => 'default',
-                        Schema::TABLE => 'comments',
-                        Schema::PRIMARY_KEY => 'id',
-                        Schema::COLUMNS => ['id', 'user_id', 'message'],
-                        Schema::SCHEMA => [],
-                        Schema::RELATIONS => [],
-                    ],
-                ]
-            )
-        );
-    }
-
     public function testFetchData(): void
     {
         $selector = new Select($this->orm, User::class);
@@ -114,7 +38,7 @@ abstract class PromiseMapperTest extends BaseTest
                     'balance' => 200.0,
                 ],
             ],
-            $selector->fetchData()
+            $selector->fetchData(),
         );
     }
 
@@ -254,7 +178,7 @@ abstract class PromiseMapperTest extends BaseTest
                 'email' => 'hello@world.com',
                 'balance' => 100.0,
             ],
-            $this->orm->getHeap()->get($result)->getData()
+            $this->orm->getHeap()->get($result)->getData(),
         );
     }
 
@@ -397,5 +321,81 @@ abstract class PromiseMapperTest extends BaseTest
         $this->orm = $this->orm->with(heap: new Heap());
         $u = $this->orm->getRepository(User::class)->findByPK(1);
         $this->assertNull($u->balance);
+    }
+
+    public function setUp(): void
+    {
+        parent::setUp();
+
+        $this->makeTable(
+            'users',
+            [
+                'id' => 'primary',
+                'email' => 'string',
+                'balance' => 'float,nullable',
+            ],
+        );
+
+        $this->makeTable(
+            'comments',
+            [
+                'id' => 'primary',
+                'message' => 'string',
+                'user_id' => 'int',
+            ],
+        );
+
+        $this->getDatabase()->table('users')->insertMultiple(
+            ['email', 'balance'],
+            [
+                ['hello@world.com', 100],
+                ['another@world.com', 200],
+            ],
+        );
+
+        $this->getDatabase()->table('comments')->insertMultiple(
+            ['message', 'user_id'],
+            [
+                ['Comment 1', 1],
+                ['Comment 2', 1],
+            ],
+        );
+
+        $this->orm = $this->withSchema(
+            new Schema(
+                [
+                    User::class => [
+                        Schema::ROLE => 'user',
+                        Schema::MAPPER => PromiseMapper::class,
+                        Schema::DATABASE => 'default',
+                        Schema::TABLE => 'users',
+                        Schema::PRIMARY_KEY => 'id',
+                        Schema::COLUMNS => ['id', 'email', 'balance'],
+                        Schema::TYPECAST => ['id' => 'int', 'balance' => 'float'],
+                        Schema::SCHEMA => [],
+                        Schema::RELATIONS => [
+                            'comments' => [
+                                Relation::TYPE => Relation::HAS_MANY,
+                                Relation::TARGET => 'comment',
+                                Relation::SCHEMA => [
+                                    Relation::CASCADE => true,
+                                    Relation::INNER_KEY => 'id',
+                                    Relation::OUTER_KEY => 'user_id',
+                                ],
+                            ],
+                        ],
+                    ],
+                    'comment' => [
+                        Schema::MAPPER => StdMapper::class,
+                        Schema::DATABASE => 'default',
+                        Schema::TABLE => 'comments',
+                        Schema::PRIMARY_KEY => 'id',
+                        Schema::COLUMNS => ['id', 'user_id', 'message'],
+                        Schema::SCHEMA => [],
+                        Schema::RELATIONS => [],
+                    ],
+                ],
+            ),
+        );
     }
 }

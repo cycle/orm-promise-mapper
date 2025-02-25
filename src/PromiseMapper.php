@@ -53,7 +53,7 @@ class PromiseMapper extends DatabaseMapper
         // Force searching related entities in the Heap
         $relations = $this->relationMap->getRelations();
         foreach ($data as $k => $v) {
-            if (!$v instanceof ReferenceInterface || !array_key_exists($k, $relations)) {
+            if (!$v instanceof ReferenceInterface || !\array_key_exists($k, $relations)) {
                 continue;
             }
             $relation = $relations[$k];
@@ -77,16 +77,16 @@ class PromiseMapper extends DatabaseMapper
      */
     public function fetchFields(object $entity): array
     {
-        $values = array_intersect_key($this->extract($entity), $this->columns + $this->parentColumns);
+        $values = \array_intersect_key($this->extract($entity), $this->columns + $this->parentColumns);
 
         return $values + $this->getDiscriminatorValues($entity);
     }
 
     public function fetchRelations(object $entity): array
     {
-        return array_intersect_key(
+        return \array_intersect_key(
             $this->extract($entity),
-            $this->relationMap->getRelations()
+            $this->relationMap->getRelations(),
         );
     }
 }

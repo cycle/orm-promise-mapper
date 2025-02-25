@@ -62,6 +62,45 @@ abstract class ParentClassRelationsTest extends SimpleCasesTest
     protected const TOOL_ROLE = 'tool';
     protected const BOOK_ROLE = 'book';
 
+    /**
+     * Parent's relation should be initialized
+     */
+    public function testLoadParentRelations(): void
+    {
+        /** @var Programator $entity */
+        $entity = (new Select($this->orm, static::PROGRAMATOR_ROLE))->load('tech_book')->wherePK(2)->fetchOne();
+
+        $this->assertNotNull($entity->book);
+        $this->assertNotNull($entity->tech_book);
+    }
+
+    /**
+     * Parent's relations should be removed or not removed with their parent
+     */
+    public function testRemoveSubclassWithRelations(): void
+    {
+        /** @var Engineer $engineer */
+        $engineer = (new Select($this->orm, static::ENGINEER_ROLE))->loadSubclasses(false)->wherePK(2)->fetchOne();
+
+        $this->captureWriteQueries();
+        (new EntityManager($this->orm))->delete($engineer)->run();
+        $this->assertNumWrites(1);
+
+        $this->captureWriteQueries();
+        (new EntityManager($this->orm))->delete($engineer)->run();
+        $this->assertNumWrites(0);
+
+        $this->assertNull((new Select($this->orm, static::PROGRAMATOR_ROLE))->wherePK(2)->fetchOne());
+        $this->assertNull(
+            (new Select($this->orm, static::ENGINEER_ROLE))->loadSubclasses(false)->wherePK(2)->fetchOne(),
+        );
+        /** @var Employee $employee */
+        $employee = (new Select($this->orm, static::EMPLOYEE_ROLE))->loadSubclasses(false)->wherePK(2)->fetchOne();
+
+        $this->assertNotNull($employee);
+        $this->assertNotNull($employee->book);
+    }
+
     public function setUp(): void
     {
         JtiBaseTest::setUp();
@@ -104,92 +143,53 @@ abstract class ParentClassRelationsTest extends SimpleCasesTest
         ], pk: ['id']);
 
         $this->getDatabase()->table('tool')->insertMultiple(
-            array_keys(static::TOOL_1),
+            \array_keys(static::TOOL_1),
             [
                 self::TOOL_1,
                 self::TOOL_2,
                 self::TOOL_3,
                 self::TOOL_4,
-            ]
+            ],
         );
         $this->getDatabase()->table('book')->insertMultiple(
-            array_keys(static::BOOK_1),
+            \array_keys(static::BOOK_1),
             [
                 self::BOOK_1,
                 self::BOOK_2,
                 self::BOOK_3,
                 self::BOOK_4,
-            ]
+            ],
         );
         $this->getDatabase()->table('employee')->insertMultiple(
-            array_keys(static::EMPLOYEE_1),
+            \array_keys(static::EMPLOYEE_1),
             [
                 self::EMPLOYEE_1,
                 self::EMPLOYEE_2,
                 self::EMPLOYEE_3,
                 self::EMPLOYEE_4,
-            ]
+            ],
         );
         $this->getDatabase()->table('engineer')->insertMultiple(
-            array_keys(static::ENGINEER_2),
+            \array_keys(static::ENGINEER_2),
             [
                 self::ENGINEER_2,
                 self::ENGINEER_4,
-            ]
+            ],
         );
         $this->getDatabase()->table('programator')->insertMultiple(
-            array_keys(static::PROGRAMATOR_2),
+            \array_keys(static::PROGRAMATOR_2),
             [
                 self::PROGRAMATOR_2,
                 self::PROGRAMATOR_4,
-            ]
+            ],
         );
         $this->getDatabase()->table('manager')->insertMultiple(
-            array_keys(static::MANAGER_1),
+            \array_keys(static::MANAGER_1),
             [
                 self::MANAGER_1,
                 self::MANAGER_3,
-            ]
+            ],
         );
-    }
-
-    /**
-     * Parent's relation should be initialized
-     */
-    public function testLoadParentRelations(): void
-    {
-        /** @var Programator $entity */
-        $entity = (new Select($this->orm, static::PROGRAMATOR_ROLE))->load('tech_book')->wherePK(2)->fetchOne();
-
-        $this->assertNotNull($entity->book);
-        $this->assertNotNull($entity->tech_book);
-    }
-
-    /**
-     * Parent's relations should be removed or not removed with their parent
-     */
-    public function testRemoveSubclassWithRelations(): void
-    {
-        /** @var Engineer $engineer */
-        $engineer = (new Select($this->orm, static::ENGINEER_ROLE))->loadSubclasses(false)->wherePK(2)->fetchOne();
-
-        $this->captureWriteQueries();
-        (new EntityManager($this->orm))->delete($engineer)->run();
-        $this->assertNumWrites(1);
-
-        $this->captureWriteQueries();
-        (new EntityManager($this->orm))->delete($engineer)->run();
-        $this->assertNumWrites(0);
-
-        $this->assertNull((new Select($this->orm, static::PROGRAMATOR_ROLE))->wherePK(2)->fetchOne());
-        $this->assertNull(
-            (new Select($this->orm, static::ENGINEER_ROLE))->loadSubclasses(false)->wherePK(2)->fetchOne()
-        );
-        /** @var Employee $employee */
-        $employee = (new Select($this->orm, static::EMPLOYEE_ROLE))->loadSubclasses(false)->wherePK(2)->fetchOne();
-
-        $this->assertNotNull($employee);
-        $this->assertNotNull($employee->book);
     }
 
     protected function getSchemaArray(): array

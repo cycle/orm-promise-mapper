@@ -32,36 +32,6 @@ abstract class BaseTest extends TestCase
     protected int $numReads = 0;
     private static array $driverCache = [];
 
-    public function setUp(): void
-    {
-        $this->setUpLogger($this->getDriver());
-
-        if (self::$config['debug'] ?? false) {
-            $this->enableProfiling();
-        }
-
-        $this->dbal = new DatabaseManager(new DatabaseConfig());
-        $this->dbal->addDatabase(
-            new Database(
-                'default',
-                '',
-                $this->getDriver()
-            )
-        );
-    }
-
-    public function tearDown(): void
-    {
-        $this->dropDatabase($this->dbal->database('default'));
-
-        $this->orm = null;
-        $this->dbal = null;
-
-        if (\function_exists('gc_collect_cycles')) {
-            gc_collect_cycles();
-        }
-    }
-
     public function getDriver(): DriverInterface
     {
         if (isset(static::$driverCache[static::DRIVER])) {
@@ -76,29 +46,6 @@ abstract class BaseTest extends TestCase
         return static::$driverCache[static::DRIVER] = $this->driver;
     }
 
-    protected function dropDatabase(Database $database = null): void
-    {
-        if ($database === null) {
-            return;
-        }
-
-        foreach ($database->getTables() as $table) {
-            $schema = $table->getSchema();
-
-            foreach ($schema->getForeignKeys() as $foreign) {
-                $schema->dropForeignKey($foreign->getColumns());
-            }
-
-            $schema->save(Handler::DROP_FOREIGN_KEYS);
-        }
-
-        foreach ($database->getTables() as $table) {
-            $schema = $table->getSchema();
-            $schema->declareDropped();
-            $schema->save();
-        }
-    }
-
     public function withSchema(SchemaInterface $schema): ORM
     {
         $this->orm = new ORM(
@@ -106,26 +53,12 @@ abstract class BaseTest extends TestCase
                 $this->dbal,
                 RelationConfig::getDefault(),
                 null,
-                new ArrayCollectionFactory()
+                new ArrayCollectionFactory(),
             ),
-            $schema
+            $schema,
         );
 
         return $this->orm;
-    }
-
-    protected function getDatabase(): Database
-    {
-        return $this->dbal->database('default');
-    }
-
-    protected function save(object ...$entities): void
-    {
-        $tr = new EntityManager($this->orm);
-        foreach ($entities as $entity) {
-            $tr->persist($entity);
-        }
-        $tr->run();
     }
 
     /**
@@ -152,7 +85,7 @@ abstract class BaseTest extends TestCase
             $this->assertSame(
                 $numWrites,
                 $queries,
-                "Number of write SQL queries do not match, expected {$numWrites} got {$queries}."
+                "Number of write SQL queries do not match, expected {$numWrites} got {$queries}.",
             );
         }
     }
@@ -165,9 +98,76 @@ abstract class BaseTest extends TestCase
             $this->assertSame(
                 $numReads,
                 $queries,
-                "Number of read SQL queries do not match, expected {$numReads} got {$queries}."
+                "Number of read SQL queries do not match, expected {$numReads} got {$queries}.",
             );
         }
+    }
+
+    public function setUp(): void
+    {
+        $this->setUpLogger($this->getDriver());
+
+        if (self::$config['debug'] ?? false) {
+            $this->enableProfiling();
+        }
+
+        $this->dbal = new DatabaseManager(new DatabaseConfig());
+        $this->dbal->addDatabase(
+            new Database(
+                'default',
+                '',
+                $this->getDriver(),
+            ),
+        );
+    }
+
+    public function tearDown(): void
+    {
+        $this->dropDatabase($this->dbal->database('default'));
+
+        $this->orm = null;
+        $this->dbal = null;
+
+        if (\function_exists('gc_collect_cycles')) {
+            \gc_collect_cycles();
+        }
+    }
+
+    protected function dropDatabase(?Database $database = null): void
+    {
+        if ($database === null) {
+            return;
+        }
+
+        foreach ($database->getTables() as $table) {
+            $schema = $table->getSchema();
+
+            foreach ($schema->getForeignKeys() as $foreign) {
+                $schema->dropForeignKey($foreign->getColumns());
+            }
+
+            $schema->save(Handler::DROP_FOREIGN_KEYS);
+        }
+
+        foreach ($database->getTables() as $table) {
+            $schema = $table->getSchema();
+            $schema->declareDropped();
+            $schema->save();
+        }
+    }
+
+    protected function getDatabase(): Database
+    {
+        return $this->dbal->database('default');
+    }
+
+    protected function save(object ...$entities): void
+    {
+        $tr = new EntityManager($this->orm);
+        foreach ($entities as $entity) {
+            $tr->persist($entity);
+        }
+        $tr->run();
     }
 
     /**
