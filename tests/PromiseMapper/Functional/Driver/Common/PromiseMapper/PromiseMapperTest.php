@@ -279,19 +279,17 @@ abstract class PromiseMapperTest extends BaseTest
         $this->assertSame('test@email.com', $u->email);
 
         $u2 = $this->orm->getRepository(User::class)->findByPK(1);
-        $this->assertSame('hello@world.com', $u2->email);
+        $this->assertSame('test@email.com', $u2->email);
 
         $u3 = $this->orm->with(heap: new Heap())->getRepository(User::class)->findByPK(1);
         $this->assertSame('hello@world.com', $u3->email);
 
         $this->captureWriteQueries();
-        $em = new EntityManager($this->orm);
-        $em->persist($u);
-        $em->run();
-        $this->assertNumWrites(0);
+        $this->save($u);
+        $this->assertNumWrites(1);
 
         $u4 = $this->orm->with(heap: new Heap())->getRepository(User::class)->findByPK(1);
-        $this->assertSame('hello@world.com', $u4->email);
+        $this->assertSame('test@email.com', $u4->email);
     }
 
     public function testNullableValuesInASndOut(): void
