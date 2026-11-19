@@ -19,6 +19,8 @@
     <testsuites>
         <testsuite name="Cycle ORM PromiseMapper">
             <directory>./tests/</directory>
+            <!-- Abstract per-driver base cases; each driver folder holds the concrete classes -->
+            <exclude>./tests/PromiseMapper/Functional/Driver/Common</exclude>
         </testsuite>
     </testsuites>
 
