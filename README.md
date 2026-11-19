@@ -1,31 +1,58 @@
-# Cycle ORM PromiseMapper
-[![Latest Stable Version](https://poser.pugx.org/cycle/orm-promise-mapper/version)](https://packagist.org/packages/cycle/orm-promise-mapper)
-[![Build Status](https://github.com/cycle/orm-promise-mapper/workflows/build/badge.svg)](https://github.com/cycle/orm-promise-mapper/actions)
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/cycle/orm-promise-mapper/badges/quality-score.png?b=1.x)](https://scrutinizer-ci.com/g/cycle/orm-promise-mapper/?branch=1.x)
-[![Codecov](https://codecov.io/gh/cycle/orm-promise-mapper/graph/badge.svg)](https://codecov.io/gh/cycle/orm-promise-mapper)
-<a href="https://discord.gg/TFeEmCs"><img src="https://img.shields.io/badge/discord-chat-magenta.svg"></a>
+<div align="center">
+    <a href="https://cycle-orm.dev" target="_blank">
+        <picture>
+            <source media="(prefers-color-scheme: dark)" srcset="https://github.com/cycle/.github/blob/main/logo/words-vector-dark.svg?raw=true">
+            <img width="50%" align="center" src="https://github.com/cycle/.github/blob/main/logo/words-vector-light.svg?raw=true" alt="CycleORM Logo">
+        </picture>
+    </a>
+</div>
 
-Cycle ORM provides the ability to carry data over the specific class instances by using `cycle/orm-promise-mapper`
-package with `\Cycle\ORM\Reference\Promise` objects for relations with lazy loading.
+<p align="center">Promise mapper for Cycle ORM</p>
 
-## Installation
+<div align="center">
 
-The preferred way to install this package is through [Composer](https://getcomposer.org/download/):
+[![Documentation](https://img.shields.io/badge/Documentation-blue?style=for-the-badge&logo=gitbook&logoColor=white)](https://cycle-orm.dev/docs/mapper-promise-mapper/current/en)
+[![Sponsor](https://img.shields.io/static/v1?style=for-the-badge&label=&message=Sponsor&logo=githubsponsors&logoColor=white&color=%23EA4AAA)](https://github.com/sponsors/cycle)
+
+[![Psalm Level](https://shepherd.dev/github/cycle/orm-promise-mapper/level.svg)](https://shepherd.dev/github/cycle/orm-promise-mapper)
+[![Type Coverage](https://shepherd.dev/github/cycle/orm-promise-mapper/coverage.svg)](https://shepherd.dev/github/cycle/orm-promise-mapper)
+[![Codecov](https://codecov.io/gh/cycle/orm-promise-mapper/branch/1.x/graph/badge.svg)](https://codecov.io/gh/cycle/orm-promise-mapper)
+[![Discord](https://img.shields.io/discord/538114875570913290?style=flat-square&logo=discord&labelColor=7289d9&logoColor=white&color=39456d)](https://discord.gg/spiralphp)
+
+</div>
+
+<br />
+
+With `cycle/orm-promise-mapper`, Cycle ORM hydrates entities as instances of your own classes and puts `\Cycle\ORM\Reference\Promise` objects into lazy-loaded relations.
+
+## Get Started
+
+### Requirements
+
+- PHP 8.2+
+
+### Installation
 
 ```bash
 composer require cycle/orm-promise-mapper
 ```
 
-## Define the Entity
+[![PHP](https://img.shields.io/packagist/php-v/cycle/orm-promise-mapper.svg?style=flat-square&logo=php)](https://packagist.org/packages/cycle/orm-promise-mapper)
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/cycle/orm-promise-mapper.svg?style=flat-square&logo=packagist)](https://packagist.org/packages/cycle/orm-promise-mapper)
+[![License](https://img.shields.io/packagist/l/cycle/orm-promise-mapper.svg?style=flat-square)](LICENSE)
+[![Total Downloads](https://img.shields.io/packagist/dt/cycle/orm-promise-mapper.svg?style=flat-square)](https://packagist.org/packages/cycle/orm-promise-mapper/stats)
+
+### Define the Entity
 
 ```php
 use Cycle\Annotated\Annotation\Entity;
 use Cycle\Annotated\Annotation\Column;
 use Cycle\Annotated\Annotation\Relation\BelongsTo;
 use Cycle\Annotated\Annotation\Relation\HasMany;
+use Cycle\ORM\PromiseMapper\PromiseMapper;
 use Cycle\ORM\Reference\ReferenceInterface;
 
-#[Entity]
+#[Entity(mapper: PromiseMapper::class)]
 class User
 {
     #[Column(type: 'primary')]
@@ -38,7 +65,7 @@ class User
     public ReferenceInterface|array $tags;
 }
 
-#[Entity]
+#[Entity(mapper: PromiseMapper::class)]
 class Post
 {
     // ...
@@ -51,7 +78,7 @@ class Post
 }
 ```
 
-## Fetching entity data
+### Fetching entity data
 
 ```php
 $user = $orm->getRepository('user')->findByPK(1);
@@ -63,7 +90,7 @@ foreach ($user->posts as $post) {
 
 // $user->tags contains Cycle\ORM\Reference\Promise object because of lazy loading
 $tags = $user->tags->fetch();
-foreach ($tags as $post) {
+foreach ($tags as $tag) {
     // ...
 }
 
@@ -76,7 +103,19 @@ $userId = $post->user->fetch()->id;
 $tagName = $post->tag->name;
 ```
 
-## License:
+## Testing
 
-The MIT License (MIT). Please see [`LICENSE`](./LICENSE) for more information.
-Maintained by [Spiral Scout](https://spiralscout.com).
+Start the database containers from the `tests` folder and run the test suite:
+
+```bash
+cd tests
+docker compose up -d
+cd ..
+vendor/bin/phpunit
+```
+
+To run only the SQLite tests, which need no containers:
+
+```bash
+vendor/bin/phpunit --group driver-sqlite
+```
