@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Cycle\ORM\PromiseMapper\Tests\Traits;
 
-use Cycle\ORM\PromiseMapper\Tests\Utils\TableRenderer;
 use Cycle\Database\Database;
 use Cycle\Database\ForeignKeyInterface;
+use Cycle\ORM\PromiseMapper\Tests\Utils\TableRenderer;
 
 trait TableTrait
 {

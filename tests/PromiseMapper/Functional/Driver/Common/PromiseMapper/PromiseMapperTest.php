@@ -10,12 +10,12 @@ use Cycle\ORM\Heap\Node;
 use Cycle\ORM\Mapper\StdMapper;
 use Cycle\ORM\PromiseMapper\PromiseMapper;
 use Cycle\ORM\PromiseMapper\Tests\Fixtures\User;
+use Cycle\ORM\PromiseMapper\Tests\Functional\Driver\Common\BaseTest;
+use Cycle\ORM\PromiseMapper\Tests\Traits\TableTrait;
 use Cycle\ORM\Reference\Promise;
 use Cycle\ORM\Relation;
 use Cycle\ORM\Schema;
 use Cycle\ORM\Select;
-use Cycle\ORM\PromiseMapper\Tests\Functional\Driver\Common\BaseTest;
-use Cycle\ORM\PromiseMapper\Tests\Traits\TableTrait;
 
 abstract class PromiseMapperTest extends BaseTest
 {

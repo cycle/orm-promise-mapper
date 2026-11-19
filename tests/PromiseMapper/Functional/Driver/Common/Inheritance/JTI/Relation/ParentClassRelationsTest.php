@@ -6,9 +6,6 @@ namespace Cycle\ORM\PromiseMapper\Tests\Functional\Driver\Common\Inheritance\JTI
 
 use Cycle\ORM\EntityManager;
 use Cycle\ORM\PromiseMapper\PromiseMapper;
-use Cycle\ORM\Relation;
-use Cycle\ORM\SchemaInterface;
-use Cycle\ORM\Select;
 use Cycle\ORM\PromiseMapper\Tests\Fixtures\Inheritance\Book;
 use Cycle\ORM\PromiseMapper\Tests\Fixtures\Inheritance\Employee;
 use Cycle\ORM\PromiseMapper\Tests\Fixtures\Inheritance\Engineer;
@@ -17,6 +14,9 @@ use Cycle\ORM\PromiseMapper\Tests\Fixtures\Inheritance\Programator;
 use Cycle\ORM\PromiseMapper\Tests\Fixtures\Inheritance\Tool;
 use Cycle\ORM\PromiseMapper\Tests\Functional\Driver\Common\Inheritance\JTI\JtiBaseTest;
 use Cycle\ORM\PromiseMapper\Tests\Functional\Driver\Common\Inheritance\JTI\SimpleCasesTest;
+use Cycle\ORM\Relation;
+use Cycle\ORM\SchemaInterface;
+use Cycle\ORM\Select;
 
 abstract class ParentClassRelationsTest extends SimpleCasesTest
 {

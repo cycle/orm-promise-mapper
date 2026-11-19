@@ -8,13 +8,13 @@ use Cycle\ORM\Exception\SchemaException;
 use Cycle\ORM\Heap\Heap;
 use Cycle\ORM\Mapper\StdMapper;
 use Cycle\ORM\PromiseMapper\PromiseMapper;
+use Cycle\ORM\PromiseMapper\Tests\Fixtures\Inheritance\RbacItemAbstract;
+use Cycle\ORM\PromiseMapper\Tests\Fixtures\Inheritance\RbacPermission;
+use Cycle\ORM\PromiseMapper\Tests\Fixtures\Inheritance\RbacRole;
 use Cycle\ORM\Relation;
 use Cycle\ORM\Schema;
 use Cycle\ORM\SchemaInterface;
 use Cycle\ORM\Select;
-use Cycle\ORM\PromiseMapper\Tests\Fixtures\Inheritance\RbacItemAbstract;
-use Cycle\ORM\PromiseMapper\Tests\Fixtures\Inheritance\RbacPermission;
-use Cycle\ORM\PromiseMapper\Tests\Fixtures\Inheritance\RbacRole;
 
 abstract class ManyToManyTest extends StiBaseTest
 {

@@ -6,17 +6,17 @@ namespace Cycle\ORM\PromiseMapper\Tests\Functional\Driver\Common\Relation\HasMan
 
 use Cycle\ORM\Heap\Heap;
 use Cycle\ORM\PromiseMapper\PromiseMapper;
+use Cycle\ORM\PromiseMapper\Tests\Fixtures\Comment;
+use Cycle\ORM\PromiseMapper\Tests\Fixtures\SortByIDScope;
+use Cycle\ORM\PromiseMapper\Tests\Fixtures\User;
+use Cycle\ORM\PromiseMapper\Tests\Functional\Driver\Common\BaseTest;
+use Cycle\ORM\PromiseMapper\Tests\Traits\TableTrait;
 use Cycle\ORM\Reference\Promise;
 use Cycle\ORM\Reference\ReferenceInterface;
 use Cycle\ORM\Relation;
 use Cycle\ORM\Schema;
 use Cycle\ORM\Select;
 use Cycle\ORM\Select\JoinableLoader;
-use Cycle\ORM\PromiseMapper\Tests\Functional\Driver\Common\BaseTest;
-use Cycle\ORM\PromiseMapper\Tests\Fixtures\Comment;
-use Cycle\ORM\PromiseMapper\Tests\Fixtures\SortByIDScope;
-use Cycle\ORM\PromiseMapper\Tests\Fixtures\User;
-use Cycle\ORM\PromiseMapper\Tests\Traits\TableTrait;
 
 abstract class HasManyPromiseMapperTest extends BaseTest
 {
