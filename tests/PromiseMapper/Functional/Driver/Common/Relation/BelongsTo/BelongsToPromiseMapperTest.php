@@ -7,14 +7,14 @@ namespace Cycle\ORM\PromiseMapper\Tests\Functional\Driver\Common\Relation\Belong
 use Cycle\ORM\EntityManager;
 use Cycle\ORM\Heap\Heap;
 use Cycle\ORM\PromiseMapper\PromiseMapper;
+use Cycle\ORM\PromiseMapper\Tests\Fixtures\Profile;
+use Cycle\ORM\PromiseMapper\Tests\Fixtures\User;
+use Cycle\ORM\PromiseMapper\Tests\Functional\Driver\Common\BaseTest;
+use Cycle\ORM\PromiseMapper\Tests\Traits\TableTrait;
 use Cycle\ORM\Reference\Promise;
 use Cycle\ORM\Relation;
 use Cycle\ORM\Schema;
 use Cycle\ORM\Select;
-use Cycle\ORM\PromiseMapper\Tests\Functional\Driver\Common\BaseTest;
-use Cycle\ORM\PromiseMapper\Tests\Fixtures\Profile;
-use Cycle\ORM\PromiseMapper\Tests\Fixtures\User;
-use Cycle\ORM\PromiseMapper\Tests\Traits\TableTrait;
 
 abstract class BelongsToPromiseMapperTest extends BaseTest
 {

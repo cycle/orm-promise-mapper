@@ -7,9 +7,9 @@ namespace Cycle\ORM\PromiseMapper\Tests\Functional\Driver\Common\Inheritance\STI
 use Cycle\ORM\Collection\ArrayCollectionFactory;
 use Cycle\ORM\Config\RelationConfig;
 use Cycle\ORM\Factory;
-use Cycle\ORM\Schema;
 use Cycle\ORM\PromiseMapper\Tests\Functional\Driver\Common\BaseTest;
 use Cycle\ORM\PromiseMapper\Tests\Traits\TableTrait;
+use Cycle\ORM\Schema;
 
 abstract class StiBaseTest extends BaseTest
 {

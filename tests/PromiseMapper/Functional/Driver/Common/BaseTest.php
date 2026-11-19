@@ -12,11 +12,11 @@ use Cycle\Database\Driver\Handler;
 use Cycle\ORM\Collection\ArrayCollectionFactory;
 use Cycle\ORM\Config\RelationConfig;
 use Cycle\ORM\EntityManager;
-use Cycle\ORM\PromiseMapper\Tests\Traits\Loggable;
 use Cycle\ORM\Factory;
+use Cycle\ORM\ORM;
+use Cycle\ORM\PromiseMapper\Tests\Traits\Loggable;
 use Cycle\ORM\Reference\ReferenceInterface;
 use Cycle\ORM\SchemaInterface;
-use Cycle\ORM\ORM;
 use PHPUnit\Framework\TestCase;
 
 abstract class BaseTest extends TestCase
