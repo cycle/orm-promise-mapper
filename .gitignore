@@ -2,4 +2,6 @@
 !/.github/
 /runtime/
 /vendor/
+/vendor-bin/*/vendor/
+/vendor-bin/*/composer.lock
 composer.lock
