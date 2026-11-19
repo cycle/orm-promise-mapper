@@ -1,115 +1,56 @@
+---
+
+on:  # yamllint disable-line rule:truthy
+  push:
+    branches:
+      - 1.x
+  pull_request: null
+
 name: build
 
-on: [push, pull_request]
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   test:
-    needs: sqlite
-    name: Test PHP ${{ matrix.php-version }} with Code Coverage
-    runs-on: ${{ matrix.os }}
+    # Unit tests and the SQLite driver tests; MySQL, Postgres and MSSQL run in their own workflows.
+    name: PHP ${{ matrix.php }}, ${{ matrix.dependencies }} dependencies
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
     strategy:
       fail-fast: false
       matrix:
-        os:
-          - ubuntu-latest
-
-        php-version:
-          - "8.0"
-          - "8.1"
-          - "8.2"
-          - "8.3"
-          - "8.4"
+        php: ['8.2', '8.3', '8.4', '8.5']
+        dependencies: ['lowest', 'highest']
     steps:
-      - name: Install ODBC driver.
-        run: |
-            sudo curl https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/prod.list | sudo tee /etc/apt/sources.list.d/mssql-release.list
-            sudo ACCEPT_EULA=Y apt-get install -y msodbcsql18
       - name: Checkout
-        uses: actions/checkout@v2
-      - name: Setup DB services
-        run: |
-          cd tests
-          docker compose up -d
-          cd ..
-      - name: Setup PHP ${{ matrix.php-version }}
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Setup PHP ${{ matrix.php }}
         uses: shivammathur/setup-php@v2
         with:
-          php-version: ${{ matrix.php-version }}
+          php-version: ${{ matrix.php }}
           coverage: pcov
-          tools: pecl
-          extensions: mbstring, pdo, pdo_sqlite, pdo_pgsql, pdo_sqlsrv, pdo_mysql
-      - name: Get Composer Cache Directory
-        id: composer-cache
-        run: echo "::set-output name=dir::$(composer config cache-files-dir)"
-      - name: Restore Composer Cache
-        uses: actions/cache@v4
+          extensions: mbstring, pdo, pdo_sqlite
+
+      - name: Install Composer dependencies
+        uses: ramsey/composer-install@v4
         with:
-          path: ${{ steps.composer-cache.outputs.dir }}
-          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.json') }}
-          restore-keys: ${{ runner.os }}-composer-
-      - name: Install dependencies with composer
-        if: matrix.php-version != '8.2'
-        run: composer update --prefer-dist --no-interaction --no-progress --optimize-autoloader --ansi
-      - name: Install dependencies with composer php 8.2
-        if: matrix.php-version == '8.2'
-        run: composer update --ignore-platform-reqs --prefer-dist --no-interaction --no-progress --optimize-autoloader --ansi
+          dependency-versions: ${{ matrix.dependencies }}
+
       - name: Execute Tests
-        run: |
-          vendor/bin/phpunit --coverage-clover=coverage.clover
+        run: vendor/bin/phpunit --exclude-group driver-mysql,driver-postgres,driver-sqlserver --coverage-clover=coverage.clover
+
       - name: Upload coverage to Codecov
+        if: matrix.php == '8.4' && matrix.dependencies == 'highest'
         continue-on-error: true # if is fork
-        uses: codecov/codecov-action@v1
+        uses: codecov/codecov-action@v7
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          file: ./coverage.clover
-      - name: Upload coverage to Scrutinizer
-        continue-on-error: true # if is fork
-        uses: sudo-bot/action-scrutinizer@latest
-        with:
-          cli-args: "--format=php-clover coverage.clover"
-
-  sqlite:
-    name: SQLite PHP ${{ matrix.php-version }}
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        os:
-          - ubuntu-latest
-
-        php-version:
-          - "8.0"
-          - "8.1"
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-      - name: Setup PHP ${{ matrix.php-version }}
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: ${{ matrix.php-version }}
-          coverage: pcov
-          tools: pecl
-          extensions: mbstring, pdo, pdo_sqlite
-      - name: Get Composer Cache Directory
-        id: composer-cache
-        run: echo "::set-output name=dir::$(composer config cache-files-dir)"
-      - name: Restore Composer Cache
-        uses: actions/cache@v2
-        with:
-          path: ${{ steps.composer-cache.outputs.dir }}
-          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.json') }}
-          restore-keys: ${{ runner.os }}-composer-
-
-      - name: Install dependencies with composer
-        if: matrix.php-version != '8.1'
-        run: composer update --prefer-dist --no-interaction --no-progress --optimize-autoloader --ansi
-
-      - name: Install dependencies with composer php 8.1
-        if: matrix.php-version == '8.1'
-        run: composer update --ignore-platform-reqs --prefer-dist --no-interaction --no-progress --optimize-autoloader --ansi
-
-      - name: Execute Tests
-        env:
-          DB: sqlite
-        run: |
-          vendor/bin/phpunit --group driver-sqlite --colors=always
+          files: ./coverage.clover
