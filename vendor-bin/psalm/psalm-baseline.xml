@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<files psalm-version="6.8.7@4258dc813b28c2b03865f34a17ddf072f006b357">
+<files psalm-version="7.11.0@9e0d0f88bc0a4233357a9aeb4b32da060644e196">
   <file src="src/PromiseMapper.php">
-    <UnusedClass>
-      <code><![CDATA[PromiseMapper]]></code>
-    </UnusedClass>
+    <ImplementedReturnTypeMismatch>
+      <code><![CDATA[object]]></code>
+    </ImplementedReturnTypeMismatch>
   </file>
 </files>
