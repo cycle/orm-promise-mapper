@@ -13,37 +13,35 @@ use Cycle\ORM\Schema;
 use Cycle\ORM\SchemaInterface;
 use PHPUnit\Framework\TestCase;
 
-class PromiseMapperTest extends TestCase
+class PromiseMapperTest
 {
     private PromiseMapper $mapper;
 
+    #[\Testo\Test]
     public function testInit(): void
     {
-        $this->assertInstanceOf(
-            User::class,
-            $this->mapper->init(['id' => 1, 'email' => 'test@email.com', 'balance' => 100], User::class),
-        );
+        \Testo\Assert::instanceOf($this->mapper->init(['id' => 1, 'email' => 'test@email.com', 'balance' => 100], User::class), User::class);
     }
 
+    #[\Testo\Test]
     public function testInitClassNotExist(): void
     {
-        $this->expectException(SchemaException::class);
+        \Testo\Expect::exception(SchemaException::class);
 
-        $this->assertInstanceOf(
-            User::class,
-            $this->mapper->init(['id' => 1, 'email' => 'test@email.com', 'balance' => 100], 'foo'),
-        );
+        \Testo\Assert::instanceOf($this->mapper->init(['id' => 1, 'email' => 'test@email.com', 'balance' => 100], 'foo'), User::class);
     }
 
+    #[\Testo\Test]
     public function testHydrate(): void
     {
         $user = $this->mapper->hydrate(new User(), ['id' => 1, 'email' => 'test@email.com', 'balance' => 100]);
 
-        $this->assertSame(1, $user->id);
-        $this->assertSame('test@email.com', $user->email);
-        $this->assertSame(100.0, $user->balance);
+        \Testo\Assert::same($user->id, 1);
+        \Testo\Assert::same($user->email, 'test@email.com');
+        \Testo\Assert::same($user->balance, 100.0);
     }
 
+    #[\Testo\Test]
     public function testExtract(): void
     {
         $user = new User();
@@ -54,9 +52,10 @@ class PromiseMapperTest extends TestCase
 
         $data = $this->mapper->extract($user);
 
-        $this->assertSame(['id' => 1, 'email' => 'test@email.com', 'balance' => 100.0, 'comments' => []], $data);
+        \Testo\Assert::same($data, ['id' => 1, 'email' => 'test@email.com', 'balance' => 100.0, 'comments' => []]);
     }
 
+    #[\Testo\Test]
     public function testFetchFields(): void
     {
         $user = new User();
@@ -67,15 +66,14 @@ class PromiseMapperTest extends TestCase
 
         $data = $this->mapper->extract($user);
 
-        $this->assertSame(['id' => 1, 'email' => 'test@email.com', 'balance' => 100.0, 'comments' => []], $data);
+        \Testo\Assert::same($data, ['id' => 1, 'email' => 'test@email.com', 'balance' => 100.0, 'comments' => []]);
     }
 
+    #[\Testo\Lifecycle\BeforeTest]
     protected function setUp(): void
     {
-        parent::setUp();
-
         $orm = new ORM(
-            $this->createMock(FactoryInterface::class),
+            \Mockery::mock(FactoryInterface::class)->shouldIgnoreMissing(),
             new Schema([
                 User::class => [
                     SchemaInterface::ENTITY => User::class,

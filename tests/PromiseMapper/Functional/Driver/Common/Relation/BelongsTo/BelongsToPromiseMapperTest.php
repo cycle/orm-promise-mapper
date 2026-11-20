@@ -20,12 +20,13 @@ abstract class BelongsToPromiseMapperTest extends BaseTest
 {
     use TableTrait;
 
+    #[\Testo\Test]
     public function testFetchRelation(): void
     {
         $selector = new Select($this->orm, Profile::class);
         $selector->orderBy('profile.id');
 
-        $this->assertEquals([
+        \Testo\Assert::equals($selector->fetchData(), [
             [
                 'id' => 1,
                 'user_id' => 1,
@@ -41,9 +42,10 @@ abstract class BelongsToPromiseMapperTest extends BaseTest
                 'user_id' => null,
                 'image' => 'third.png',
             ],
-        ], $selector->fetchData());
+        ]);
     }
 
+    #[\Testo\Test]
     public function testFetchPromises(): void
     {
         $selector = new Select($this->orm, Profile::class);
@@ -58,25 +60,26 @@ abstract class BelongsToPromiseMapperTest extends BaseTest
         $aData = $this->extractEntity($a);
         $bData = $this->extractEntity($b);
 
-        $this->assertInstanceOf(Promise::class, $aData['user']);
-        $this->assertInstanceOf(Promise::class, $bData['user']);
-        $this->assertInstanceOf(Promise::class, $userA);
-        $this->assertInstanceOf(Promise::class, $userB);
-        $this->assertNull($c->user);
+        \Testo\Assert::instanceOf($aData['user'], Promise::class);
+        \Testo\Assert::instanceOf($bData['user'], Promise::class);
+        \Testo\Assert::instanceOf($userA, Promise::class);
+        \Testo\Assert::instanceOf($userB, Promise::class);
+        \Testo\Assert::null($c->user);
         $userA->resolve();
         $userB->resolve();
 
-        $this->assertInstanceOf(User::class, $userA->fetch());
-        $this->assertNull($userB->fetch());
+        \Testo\Assert::instanceOf($userA->fetch(), User::class);
+        \Testo\Assert::null($userB->fetch());
 
         $this->captureReadQueries();
-        $this->assertSame($userA->fetch(), $userA->fetch());
-        $this->assertNull($userB->fetch());
+        \Testo\Assert::same($userA->fetch(), $userA->fetch());
+        \Testo\Assert::null($userB->fetch());
         $this->assertNumReads(0);
 
-        $this->assertEquals('hello@world.com', $userA->fetch()->email);
+        \Testo\Assert::equals($userA->fetch()->email, 'hello@world.com');
     }
 
+    #[\Testo\Test]
     public function testFetchPromisesFromHeap(): void
     {
         $selector = new Select($this->orm, Profile::class);
@@ -91,28 +94,29 @@ abstract class BelongsToPromiseMapperTest extends BaseTest
         $aData = $this->extractEntity($a);
         $bData = $this->extractEntity($b);
 
-        $this->assertInstanceOf(Promise::class, $aData['user']);
-        $this->assertInstanceOf(Promise::class, $bData['user']);
-        $this->assertInstanceOf(Promise::class, $a->user);
-        $this->assertInstanceOf(Promise::class, $b->user);
-        $this->assertNull($c->user);
+        \Testo\Assert::instanceOf($aData['user'], Promise::class);
+        \Testo\Assert::instanceOf($bData['user'], Promise::class);
+        \Testo\Assert::instanceOf($a->user, Promise::class);
+        \Testo\Assert::instanceOf($b->user, Promise::class);
+        \Testo\Assert::null($c->user);
 
         // warm up
         (new Select($this->orm, User::class))->fetchAll();
 
         $this->captureReadQueries();
-        $this->assertInstanceOf(User::class, $userA->fetch());
-        $this->assertSame($userA->getValue(), $userA->fetch());
+        \Testo\Assert::instanceOf($userA->fetch(), User::class);
+        \Testo\Assert::same($userA->fetch(), $userA->getValue());
         $this->assertNumReads(0);
 
         // invalid object can't be cached
         $this->captureReadQueries();
-        $this->assertNull($userB->fetch());
+        \Testo\Assert::null($userB->fetch());
         $this->assertNumReads(1);
 
-        $this->assertEquals('hello@world.com', $userA->fetch()->email);
+        \Testo\Assert::equals($userA->fetch()->email, 'hello@world.com');
     }
 
+    #[\Testo\Test]
     public function testNoWriteOperations(): void
     {
         $selector = new Select($this->orm, Profile::class);
@@ -125,6 +129,7 @@ abstract class BelongsToPromiseMapperTest extends BaseTest
         $this->assertNumWrites(0);
     }
 
+    #[\Testo\Test]
     public function testEditPromised(): void
     {
         $p = (new Select($this->orm, Profile::class))
@@ -145,9 +150,10 @@ abstract class BelongsToPromiseMapperTest extends BaseTest
         /** @var Promise $promise */
         $promise = $p->user;
 
-        $this->assertSame(400.0, $promise->fetch()->balance);
+        \Testo\Assert::same($promise->fetch()->balance, 400.0);
     }
 
+    #[\Testo\Lifecycle\BeforeTest]
     public function setUp(): void
     {
         parent::setUp();

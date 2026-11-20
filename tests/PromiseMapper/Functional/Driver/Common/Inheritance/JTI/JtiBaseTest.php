@@ -15,6 +15,7 @@ abstract class JtiBaseTest extends BaseTest
 {
     use TableTrait;
 
+    #[\Testo\Lifecycle\BeforeTest]
     public function setUp(): void
     {
         parent::setUp();

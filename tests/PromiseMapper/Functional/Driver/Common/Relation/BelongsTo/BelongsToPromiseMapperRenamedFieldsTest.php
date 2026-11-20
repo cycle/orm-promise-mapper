@@ -13,6 +13,7 @@ use Cycle\ORM\Schema;
 
 abstract class BelongsToPromiseMapperRenamedFieldsTest extends BelongsToPromiseMapperTest
 {
+    #[\Testo\Lifecycle\BeforeTest]
     public function setUp(): void
     {
         BaseTest::setUp();

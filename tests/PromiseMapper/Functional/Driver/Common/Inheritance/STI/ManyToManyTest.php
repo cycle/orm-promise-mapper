@@ -21,6 +21,7 @@ abstract class ManyToManyTest extends StiBaseTest
     protected const PARENT_MAPPER = PromiseMapper::class;
     protected const CHILD_MAPPER = StdMapper::class;
 
+    #[\Testo\Test]
     public function testStore(): void
     {
         $role = new RbacRole('superAdmin');
@@ -37,12 +38,13 @@ abstract class ManyToManyTest extends StiBaseTest
             ->load('children')
             ->wherePK('superAdmin')->fetchOne();
 
-        self::assertInstanceOf(RbacRole::class, $fetchedRole);
-        self::assertCount(1, $fetchedRole->children);
-        self::assertInstanceOf(RbacPermission::class, $fetchedRole->children[0]);
-        self::assertSame('writeUser', $fetchedRole->children[0]->name);
+        \Testo\Assert::instanceOf($fetchedRole, RbacRole::class);
+        \Testo\Assert::count($fetchedRole->children, 1);
+        \Testo\Assert::instanceOf($fetchedRole->children[0], RbacPermission::class);
+        \Testo\Assert::same($fetchedRole->children[0]->name, 'writeUser');
     }
 
+    #[\Testo\Test]
     public function testClearAndFillRelation(): void
     {
         $role = new RbacRole('superAdmin');
@@ -83,26 +85,28 @@ abstract class ManyToManyTest extends StiBaseTest
 
         $this->save($fetchedRole);
 
-        self::assertTrue(true);
+        \Testo\Assert::true(true);
     }
 
+    #[\Testo\Test]
     public function testMakeEntityUsingRole(): void
     {
-        $this->assertInstanceOf(RbacRole::class, $this->orm->make('rbac_role'));
-        $this->assertInstanceOf(RbacPermission::class, $this->orm->make('rbac_permission'));
-        $this->assertInstanceOf(\stdClass::class, $this->orm->make('rbac_item_inheritance'));
+        \Testo\Assert::instanceOf($this->orm->make('rbac_role'), RbacRole::class);
+        \Testo\Assert::instanceOf($this->orm->make('rbac_permission'), RbacPermission::class);
+        \Testo\Assert::instanceOf($this->orm->make('rbac_item_inheritance'), \stdClass::class);
     }
 
+    #[\Testo\Test]
     public function testMakeUndefinedChildRole(): void
     {
         $mapper = $this->orm->getMapper('rbac_item');
 
-        $this->expectException(SchemaException::class);
-        $this->expectExceptionMessageMatches('/`some_undefined_role`.+not found/');
+        \Testo\Expect::exception(SchemaException::class)->withMessageMatchingRegex('/`some_undefined_role`.+not found/');
 
         $mapper->init([], 'some_undefined_role');
     }
 
+    #[\Testo\Test]
     public function testNotTriggersRehydrate(): void
     {
         $role = new RbacRole('superAdmin', 'description');
@@ -131,11 +135,12 @@ abstract class ManyToManyTest extends StiBaseTest
         $fetchedRole->children[] = $fetchedPermission;
         $fetchedPermission->parents[] = $fetchedRole;
 
-        self::assertSame('updated description', $fetchedRole->description);
+        \Testo\Assert::same($fetchedRole->description, 'updated description');
 
         $this->orm = $this->orm->with(heap: new Heap());
     }
 
+    #[\Testo\Lifecycle\BeforeTest]
     public function setUp(): void
     {
         parent::setUp();

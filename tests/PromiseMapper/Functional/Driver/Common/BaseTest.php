@@ -19,7 +19,7 @@ use Cycle\ORM\Reference\ReferenceInterface;
 use Cycle\ORM\SchemaInterface;
 use PHPUnit\Framework\TestCase;
 
-abstract class BaseTest extends TestCase
+abstract class BaseTest
 {
     use Loggable;
 
@@ -77,32 +77,27 @@ abstract class BaseTest extends TestCase
         $this->numReads = self::$logger->countReadQueries();
     }
 
+    #[\Testo\Common\Attribute\AssertMethod]
     public function assertNumWrites(int $numWrites): void
     {
         $queries = self::$logger->countWriteQueries() - $this->numWrites;
 
         if (!empty(self::$config['strict'])) {
-            $this->assertSame(
-                $numWrites,
-                $queries,
-                "Number of write SQL queries do not match, expected {$numWrites} got {$queries}.",
-            );
+            \Testo\Assert::same($queries, $numWrites, "Number of write SQL queries do not match, expected {$numWrites} got {$queries}.");
         }
     }
 
+    #[\Testo\Common\Attribute\AssertMethod]
     public function assertNumReads(int $numReads): void
     {
         $queries = self::$logger->countReadQueries() - $this->numReads;
 
         if (!empty(self::$config['strict'])) {
-            $this->assertSame(
-                $numReads,
-                $queries,
-                "Number of read SQL queries do not match, expected {$numReads} got {$queries}.",
-            );
+            \Testo\Assert::same($queries, $numReads, "Number of read SQL queries do not match, expected {$numReads} got {$queries}.");
         }
     }
 
+    #[\Testo\Lifecycle\BeforeTest]
     public function setUp(): void
     {
         $this->setUpLogger($this->getDriver());
@@ -121,6 +116,7 @@ abstract class BaseTest extends TestCase
         );
     }
 
+    #[\Testo\Lifecycle\AfterTest]
     public function tearDown(): void
     {
         $this->dropDatabase($this->dbal->database('default'));
