@@ -105,17 +105,19 @@ $tagName = $post->tag->name;
 
 ## Testing
 
-Start the database containers from the `tests` folder and run the test suite:
+Tests run on [Testo](https://github.com/php-testo/testo) through the `cycle/testing` harness: `tests/Unit` needs no
+database, `tests/Feature` runs once per database driver. Unit and SQLite tests need no containers:
 
 ```bash
-cd tests
-docker compose up -d
-cd ..
-vendor/bin/phpunit
+composer test:unit
+composer test:sqlite
 ```
 
-To run only the SQLite tests, which need no containers:
+The other drivers run against the shared test databases:
 
 ```bash
-vendor/bin/phpunit --group driver-sqlite
+composer db:up              # or: composer db:up -- mysql
+composer test               # every suite; drivers whose server is down are skipped
+composer test:mysql         # also test:postgres, test:sqlserver
+composer db:down
 ```

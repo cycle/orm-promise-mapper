@@ -1,0 +1,28 @@
+---
+
+name: 🧪 Tests
+
+on:  # yamllint disable-line rule:truthy
+  pull_request:
+  push:
+    branches:
+      - 1.x
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+permissions:
+  contents: read
+
+jobs:
+  testo:
+    name: Testo
+    uses: cycle/gh-actions/.github/workflows/testo.yml@master
+    with:
+      coverage: true
+      # laminas/laminas-hydrator and laminas/laminas-serializer cap PHP at 8.5: drop the upper bound only.
+      composer-options: --ignore-platform-req=php+
+    secrets: inherit
+
+...
