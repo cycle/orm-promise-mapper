@@ -29,12 +29,6 @@
             "Cycle\\ORM\\PromiseMapper\\Tests\\": "tests/"
         }
     },
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "https://github.com/cycle/testing"
-        }
-    ],
     "config": {
         "sort-packages": true,
         "allow-plugins": {
