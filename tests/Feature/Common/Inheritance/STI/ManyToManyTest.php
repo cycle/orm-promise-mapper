@@ -92,11 +92,7 @@ final class ManyToManyTest extends StiBaseTest
         Assert::true(true);
     }
 
-    /**
-     * `make()` puts entities with uninitialized typed properties into the heap, which the heap check cannot read.
-     */
     #[Test]
-    #[\Cycle\Testing\ORM\Attribute\SkipHeapCheck]
     public function testMakeEntityUsingRole(): void
     {
         Assert::instanceOf($this->orm->make('rbac_role'), RbacRole::class);
