@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Cycle\ORM\PromiseMapper\Tests\Functional\Driver\Common\Inheritance\STI;
+namespace Cycle\ORM\PromiseMapper\Tests\Feature\Common\Inheritance\STI;
 
 use Cycle\ORM\Exception\SchemaException;
 use Cycle\ORM\Heap\Heap;
@@ -16,7 +16,7 @@ use Cycle\ORM\Schema;
 use Cycle\ORM\SchemaInterface;
 use Cycle\ORM\Select;
 
-abstract class ManyToManyTest extends StiBaseTest
+final class ManyToManyTest extends StiBaseTest
 {
     protected const PARENT_MAPPER = PromiseMapper::class;
     protected const CHILD_MAPPER = StdMapper::class;
@@ -88,7 +88,11 @@ abstract class ManyToManyTest extends StiBaseTest
         \Testo\Assert::true(true);
     }
 
+    /**
+     * `make()` puts entities with uninitialized typed properties into the heap, which the heap check cannot read.
+     */
     #[\Testo\Test]
+    #[\Cycle\Testing\ORM\Attribute\SkipHeapCheck]
     public function testMakeEntityUsingRole(): void
     {
         \Testo\Assert::instanceOf($this->orm->make('rbac_role'), RbacRole::class);
@@ -141,7 +145,7 @@ abstract class ManyToManyTest extends StiBaseTest
     }
 
     #[\Testo\Lifecycle\BeforeTest]
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 

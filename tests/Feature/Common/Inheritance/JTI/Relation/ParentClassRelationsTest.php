@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Cycle\ORM\PromiseMapper\Tests\Functional\Driver\Common\Inheritance\JTI\Relation;
+namespace Cycle\ORM\PromiseMapper\Tests\Feature\Common\Inheritance\JTI\Relation;
 
 use Cycle\ORM\EntityManager;
 use Cycle\ORM\PromiseMapper\PromiseMapper;
@@ -12,13 +12,13 @@ use Cycle\ORM\PromiseMapper\Tests\Fixtures\Inheritance\Engineer;
 use Cycle\ORM\PromiseMapper\Tests\Fixtures\Inheritance\Manager;
 use Cycle\ORM\PromiseMapper\Tests\Fixtures\Inheritance\Programator;
 use Cycle\ORM\PromiseMapper\Tests\Fixtures\Inheritance\Tool;
-use Cycle\ORM\PromiseMapper\Tests\Functional\Driver\Common\Inheritance\JTI\JtiBaseTest;
-use Cycle\ORM\PromiseMapper\Tests\Functional\Driver\Common\Inheritance\JTI\SimpleCasesTest;
+use Cycle\ORM\PromiseMapper\Tests\Feature\Common\Inheritance\JTI\JtiBaseTest;
+use Cycle\ORM\PromiseMapper\Tests\Feature\Common\Inheritance\JTI\SimpleCasesTest;
 use Cycle\ORM\Relation;
 use Cycle\ORM\SchemaInterface;
 use Cycle\ORM\Select;
 
-abstract class ParentClassRelationsTest extends SimpleCasesTest
+final class ParentClassRelationsTest extends SimpleCasesTest
 {
     protected const TOOL_1 = ['id' => 1, 'engineer_id' => 2, 'title' => 'Hammer'];
     protected const TOOL_2 = ['id' => 2, 'engineer_id' => 2, 'title' => 'Notebook'];
@@ -102,7 +102,7 @@ abstract class ParentClassRelationsTest extends SimpleCasesTest
     }
 
     #[\Testo\Lifecycle\BeforeTest]
-    public function setUp(): void
+    protected function setUp(): void
     {
         JtiBaseTest::setUp();
 

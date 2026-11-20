@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Cycle\ORM\PromiseMapper\Tests\Functional\Driver\Common\Inheritance\JTI;
+namespace Cycle\ORM\PromiseMapper\Tests\Feature\Common\Inheritance\JTI;
 
 use Cycle\ORM\EntityManager;
 use Cycle\ORM\Heap\Heap;
@@ -14,7 +14,7 @@ use Cycle\ORM\PromiseMapper\Tests\Fixtures\Inheritance\Programator;
 use Cycle\ORM\SchemaInterface;
 use Cycle\ORM\Select;
 
-abstract class SimpleCasesTest extends JtiBaseTest
+class SimpleCasesTest extends JtiBaseTest
 {
     protected const EMPLOYEE_DEFAULT_SORTING = ['id' => 'ASC'];
     protected const EMPLOYEE_1 = ['id' => 1, 'name' => 'John', 'age' => 38];
@@ -293,7 +293,7 @@ abstract class SimpleCasesTest extends JtiBaseTest
     }
 
     #[\Testo\Lifecycle\BeforeTest]
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 

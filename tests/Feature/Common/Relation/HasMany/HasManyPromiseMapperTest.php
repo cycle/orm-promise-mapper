@@ -2,15 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Cycle\ORM\PromiseMapper\Tests\Functional\Driver\Common\Relation\HasMany;
+namespace Cycle\ORM\PromiseMapper\Tests\Feature\Common\Relation\HasMany;
 
 use Cycle\ORM\Heap\Heap;
 use Cycle\ORM\PromiseMapper\PromiseMapper;
 use Cycle\ORM\PromiseMapper\Tests\Fixtures\Comment;
 use Cycle\ORM\PromiseMapper\Tests\Fixtures\SortByIDScope;
 use Cycle\ORM\PromiseMapper\Tests\Fixtures\User;
-use Cycle\ORM\PromiseMapper\Tests\Functional\Driver\Common\BaseTest;
-use Cycle\ORM\PromiseMapper\Tests\Traits\TableTrait;
+use Cycle\ORM\PromiseMapper\Tests\Support\PromiseMapperTestCase;
 use Cycle\ORM\Reference\Promise;
 use Cycle\ORM\Reference\ReferenceInterface;
 use Cycle\ORM\Relation;
@@ -18,10 +17,8 @@ use Cycle\ORM\Schema;
 use Cycle\ORM\Select;
 use Cycle\ORM\Select\JoinableLoader;
 
-abstract class HasManyPromiseMapperTest extends BaseTest
+final class HasManyPromiseMapperTest extends PromiseMapperTestCase
 {
-    use TableTrait;
-
     #[\Testo\Test]
     public function testFetchRelation(): void
     {
@@ -278,10 +275,8 @@ abstract class HasManyPromiseMapperTest extends BaseTest
     }
 
     #[\Testo\Lifecycle\BeforeTest]
-    public function setUp(): void
+    protected function setUp(): void
     {
-        parent::setUp();
-
         $this->makeTable('user', [
             'id' => 'primary',
             'email' => 'string',

@@ -2,24 +2,21 @@
 
 declare(strict_types=1);
 
-namespace Cycle\ORM\PromiseMapper\Tests\Functional\Driver\Common\Relation\BelongsTo;
+namespace Cycle\ORM\PromiseMapper\Tests\Feature\Common\Relation\BelongsTo;
 
 use Cycle\ORM\EntityManager;
 use Cycle\ORM\Heap\Heap;
 use Cycle\ORM\PromiseMapper\PromiseMapper;
 use Cycle\ORM\PromiseMapper\Tests\Fixtures\Profile;
 use Cycle\ORM\PromiseMapper\Tests\Fixtures\User;
-use Cycle\ORM\PromiseMapper\Tests\Functional\Driver\Common\BaseTest;
-use Cycle\ORM\PromiseMapper\Tests\Traits\TableTrait;
+use Cycle\ORM\PromiseMapper\Tests\Support\PromiseMapperTestCase;
 use Cycle\ORM\Reference\Promise;
 use Cycle\ORM\Relation;
 use Cycle\ORM\Schema;
 use Cycle\ORM\Select;
 
-abstract class BelongsToPromiseMapperTest extends BaseTest
+class BelongsToPromiseMapperTest extends PromiseMapperTestCase
 {
-    use TableTrait;
-
     #[\Testo\Test]
     public function testFetchRelation(): void
     {
@@ -154,10 +151,8 @@ abstract class BelongsToPromiseMapperTest extends BaseTest
     }
 
     #[\Testo\Lifecycle\BeforeTest]
-    public function setUp(): void
+    protected function setUp(): void
     {
-        parent::setUp();
-
         $this->makeTable('user', [
             'id' => 'primary',
             'email' => 'string',

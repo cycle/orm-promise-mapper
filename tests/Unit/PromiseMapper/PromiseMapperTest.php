@@ -5,15 +5,13 @@ declare(strict_types=1);
 namespace Cycle\ORM\PromiseMapper\Tests\Unit\PromiseMapper;
 
 use Cycle\ORM\Exception\SchemaException;
-use Cycle\ORM\FactoryInterface;
-use Cycle\ORM\ORM;
 use Cycle\ORM\PromiseMapper\PromiseMapper;
 use Cycle\ORM\PromiseMapper\Tests\Fixtures\User;
 use Cycle\ORM\Schema;
 use Cycle\ORM\SchemaInterface;
-use PHPUnit\Framework\TestCase;
+use Cycle\Testing\ORM\Memory;
 
-class PromiseMapperTest
+final class PromiseMapperTest
 {
     private PromiseMapper $mapper;
 
@@ -72,8 +70,7 @@ class PromiseMapperTest
     #[\Testo\Lifecycle\BeforeTest]
     protected function setUp(): void
     {
-        $orm = new ORM(
-            \Mockery::mock(FactoryInterface::class)->shouldIgnoreMissing(),
+        $orm = Memory::orm(
             new Schema([
                 User::class => [
                     SchemaInterface::ENTITY => User::class,

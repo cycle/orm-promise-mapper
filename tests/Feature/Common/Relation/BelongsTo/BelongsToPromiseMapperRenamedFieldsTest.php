@@ -2,22 +2,20 @@
 
 declare(strict_types=1);
 
-namespace Cycle\ORM\PromiseMapper\Tests\Functional\Driver\Common\Relation\BelongsTo;
+namespace Cycle\ORM\PromiseMapper\Tests\Feature\Common\Relation\BelongsTo;
 
 use Cycle\ORM\PromiseMapper\PromiseMapper;
 use Cycle\ORM\PromiseMapper\Tests\Fixtures\Profile;
 use Cycle\ORM\PromiseMapper\Tests\Fixtures\User;
-use Cycle\ORM\PromiseMapper\Tests\Functional\Driver\Common\BaseTest;
+use Cycle\ORM\PromiseMapper\Tests\Support\PromiseMapperTestCase;
 use Cycle\ORM\Relation;
 use Cycle\ORM\Schema;
 
-abstract class BelongsToPromiseMapperRenamedFieldsTest extends BelongsToPromiseMapperTest
+final class BelongsToPromiseMapperRenamedFieldsTest extends BelongsToPromiseMapperTest
 {
     #[\Testo\Lifecycle\BeforeTest]
-    public function setUp(): void
+    protected function setUp(): void
     {
-        BaseTest::setUp();
-
         $this->makeTable('user', [
             'user_pk' => 'primary',
             'email' => 'string',
