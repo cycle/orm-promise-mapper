@@ -16,16 +16,19 @@ use Cycle\ORM\Relation;
 use Cycle\ORM\Schema;
 use Cycle\ORM\Select;
 use Cycle\ORM\Select\JoinableLoader;
+use Testo\Assert;
+use Testo\Lifecycle\BeforeTest;
+use Testo\Test;
 
 final class HasManyPromiseMapperTest extends PromiseMapperTestCase
 {
-    #[\Testo\Test]
+    #[Test]
     public function testFetchRelation(): void
     {
         $selector = new Select($this->orm, User::class);
         $selector->load('comments')->orderBy('user.id');
 
-        \Testo\Assert::equals($selector->fetchData(), [
+        Assert::equals($selector->fetchData(), [
             [
                 'id' => 1,
                 'email' => 'hello@world.com',
@@ -57,14 +60,14 @@ final class HasManyPromiseMapperTest extends PromiseMapperTestCase
         ]);
     }
 
-    #[\Testo\Test]
+    #[Test]
     public function testPromised(): void
     {
         $selector = new Select($this->orm, User::class);
         $u = $selector->wherePK(1)->fetchOne();
 
         $this->captureReadQueries();
-        \Testo\Assert::instanceOf($u->comments, Promise::class);
+        Assert::instanceOf($u->comments, Promise::class);
         $this->assertNumReads(0);
 
         /** @var Promise $promise */
@@ -72,28 +75,28 @@ final class HasManyPromiseMapperTest extends PromiseMapperTestCase
         $promise->resolve();
         $this->assertNumReads(1);
 
-        \Testo\Assert::count($promise->getValue(), 3);
-        \Testo\Assert::instanceOf($promise->getValue()[0], Comment::class);
+        Assert::count($promise->getValue(), 3);
+        Assert::instanceOf($promise->getValue()[0], Comment::class);
     }
 
-    #[\Testo\Test]
+    #[Test]
     public function testHasManyPromiseLoaded(): void
     {
         $selector = new Select($this->orm, User::class);
         $u = $selector->wherePK(1)->fetchOne();
 
         $this->captureReadQueries();
-        \Testo\Assert::instanceOf($p = $u->comments, Promise::class);
+        Assert::instanceOf($p = $u->comments, Promise::class);
         $this->assertNumReads(0);
 
         /** @var Promise $p */
-        \Testo\Assert::false($p->hasValue());
+        Assert::false($p->hasValue());
         $p->resolve();
-        \Testo\Assert::true($p->hasValue());
-        \Testo\Assert::array($p->getValue());
+        Assert::true($p->hasValue());
+        Assert::array($p->getValue());
     }
 
-    #[\Testo\Test]
+    #[Test]
     public function testHasManyPromiseRole(): void
     {
         $u = (new Select($this->orm, User::class))->wherePK(1)->fetchOne();
@@ -101,10 +104,10 @@ final class HasManyPromiseMapperTest extends PromiseMapperTestCase
         /** @var Promise $p */
         $p = $u->comments;
 
-        \Testo\Assert::same($p->getRole(), 'comment');
+        Assert::same($p->getRole(), 'comment');
     }
 
-    #[\Testo\Test]
+    #[Test]
     public function testHasManyPromiseScope(): void
     {
         $u = (new Select($this->orm, User::class))->wherePK(1)->fetchOne();
@@ -112,26 +115,26 @@ final class HasManyPromiseMapperTest extends PromiseMapperTestCase
         /** @var Promise $p */
         $p = $u->comments;
 
-        \Testo\Assert::equals($p->getScope(), [
+        Assert::equals($p->getScope(), [
             'user_id' => 1,
         ]);
     }
 
-    #[\Testo\Test]
+    #[Test]
     public function testPromisedEmpty(): void
     {
         $u = (new Select($this->orm, User::class))->wherePK(2)->fetchOne();
 
         $this->captureReadQueries();
-        \Testo\Assert::instanceOf($p = $u->comments, ReferenceInterface::class);
+        Assert::instanceOf($p = $u->comments, ReferenceInterface::class);
         $this->assertNumReads(0);
         /** @var Promise $p */
         $p->resolve();
-        \Testo\Assert::count($p->getValue(), 0);
+        Assert::count($p->getValue(), 0);
         $this->assertNumReads(1);
     }
 
-    #[\Testo\Test]
+    #[Test]
     public function testNoChanges(): void
     {
         $u = (new Select($this->orm, User::class))->wherePK(1)->fetchOne();
@@ -144,7 +147,7 @@ final class HasManyPromiseMapperTest extends PromiseMapperTestCase
         $this->assertNumReads(0);
     }
 
-    #[\Testo\Test]
+    #[Test]
     public function testNoChangesWithNoChildren(): void
     {
         $u = (new Select($this->orm, User::class))->wherePK(2)->fetchOne();
@@ -157,7 +160,7 @@ final class HasManyPromiseMapperTest extends PromiseMapperTestCase
         $this->assertNumReads(0);
     }
 
-    #[\Testo\Test]
+    #[Test]
     public function testRemoveChildren(): void
     {
         $selector = new Select($this->orm, User::class);
@@ -168,7 +171,7 @@ final class HasManyPromiseMapperTest extends PromiseMapperTestCase
         /** @var Promise $p */
         $p = $e->comments;
         $e->comments = $p->fetch();
-        \Testo\Assert::count($e->comments, 3);
+        Assert::count($e->comments, 3);
 
         $e->comments = \array_values(\array_filter($e->comments, static fn(Comment $comment) => $comment->id !== 2));
 
@@ -180,13 +183,13 @@ final class HasManyPromiseMapperTest extends PromiseMapperTestCase
         /** @var Promise $p */
         $p = $e->comments;
         $e->comments = $p->fetch();
-        \Testo\Assert::count($e->comments, 2);
+        Assert::count($e->comments, 2);
 
-        \Testo\Assert::same($e->comments[0]->message, 'msg 1');
-        \Testo\Assert::same($e->comments[1]->message, 'msg 3');
+        Assert::same($e->comments[0]->message, 'msg 1');
+        Assert::same($e->comments[1]->message, 'msg 3');
     }
 
-    #[\Testo\Test]
+    #[Test]
     public function testAddAndRemoveChildren(): void
     {
         /** @var User $e */
@@ -211,13 +214,13 @@ final class HasManyPromiseMapperTest extends PromiseMapperTestCase
         $p = $e->comments;
         $e->comments = $p->fetch();
 
-        \Testo\Assert::count($e->comments, 3);
-        \Testo\Assert::same($e->comments[0]->message, 'msg 1');
-        \Testo\Assert::same($e->comments[1]->message, 'msg 3');
-        \Testo\Assert::same($e->comments[2]->message, 'msg 4');
+        Assert::count($e->comments, 3);
+        Assert::same($e->comments[0]->message, 'msg 1');
+        Assert::same($e->comments[1]->message, 'msg 3');
+        Assert::same($e->comments[2]->message, 'msg 4');
     }
 
-    #[\Testo\Test]
+    #[Test]
     public function testSliceAndSaveToAnotherParent(): void
     {
         /**
@@ -233,8 +236,8 @@ final class HasManyPromiseMapperTest extends PromiseMapperTestCase
         $p = $b->comments;
         $b->comments = $p->fetch();
 
-        \Testo\Assert::count($a->comments, 3);
-        \Testo\Assert::count($b->comments, 0);
+        Assert::count($a->comments, 3);
+        Assert::count($b->comments, 0);
 
         $b->comments = \array_slice($a->comments, 0, 2, true);
         foreach ($b->comments as $c) {
@@ -243,8 +246,8 @@ final class HasManyPromiseMapperTest extends PromiseMapperTestCase
 
         $b->comments[0]->message = 'new b';
 
-        \Testo\Assert::count($a->comments, 1);
-        \Testo\Assert::count($b->comments, 2);
+        Assert::count($a->comments, 1);
+        Assert::count($b->comments, 2);
 
         $this->captureWriteQueries();
         $this->save($a, $b);
@@ -264,17 +267,17 @@ final class HasManyPromiseMapperTest extends PromiseMapperTestCase
             'as' => 'comment',
         ])->orderBy('user.id')->fetchAll();
 
-        \Testo\Assert::count($a->comments, 1);
-        \Testo\Assert::count($b->comments, 2);
+        Assert::count($a->comments, 1);
+        Assert::count($b->comments, 2);
 
-        \Testo\Assert::equals($a->comments[0]->id, 3);
-        \Testo\Assert::equals($b->comments[0]->id, 1);
-        \Testo\Assert::equals($b->comments[1]->id, 2);
+        Assert::equals($a->comments[0]->id, 3);
+        Assert::equals($b->comments[0]->id, 1);
+        Assert::equals($b->comments[1]->id, 2);
 
-        \Testo\Assert::equals($b->comments[0]->message, 'new b');
+        Assert::equals($b->comments[0]->message, 'new b');
     }
 
-    #[\Testo\Lifecycle\BeforeTest]
+    #[BeforeTest]
     protected function setUp(): void
     {
         $this->makeTable('user', [

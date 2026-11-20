@@ -6,17 +6,20 @@ namespace Cycle\ORM\PromiseMapper\Tests\Feature\Common\Inheritance\JTI\Relation;
 
 use Cycle\ORM\EntityManager;
 use Cycle\ORM\PromiseMapper\PromiseMapper;
+use Cycle\ORM\PromiseMapper\Tests\Feature\Common\Inheritance\JTI\JtiBaseTest;
+use Cycle\ORM\PromiseMapper\Tests\Feature\Common\Inheritance\JTI\SimpleCasesTest;
 use Cycle\ORM\PromiseMapper\Tests\Fixtures\Inheritance\Book;
 use Cycle\ORM\PromiseMapper\Tests\Fixtures\Inheritance\Employee;
 use Cycle\ORM\PromiseMapper\Tests\Fixtures\Inheritance\Engineer;
 use Cycle\ORM\PromiseMapper\Tests\Fixtures\Inheritance\Manager;
 use Cycle\ORM\PromiseMapper\Tests\Fixtures\Inheritance\Programator;
 use Cycle\ORM\PromiseMapper\Tests\Fixtures\Inheritance\Tool;
-use Cycle\ORM\PromiseMapper\Tests\Feature\Common\Inheritance\JTI\JtiBaseTest;
-use Cycle\ORM\PromiseMapper\Tests\Feature\Common\Inheritance\JTI\SimpleCasesTest;
 use Cycle\ORM\Relation;
 use Cycle\ORM\SchemaInterface;
 use Cycle\ORM\Select;
+use Testo\Assert;
+use Testo\Lifecycle\BeforeTest;
+use Testo\Test;
 
 final class ParentClassRelationsTest extends SimpleCasesTest
 {
@@ -65,24 +68,24 @@ final class ParentClassRelationsTest extends SimpleCasesTest
     /**
      * Parent's relation should be initialized
      */
-    #[\Testo\Test]
+    #[Test]
     public function testLoadParentRelations(): void
     {
         /** @var Programator $entity */
-        $entity = (new Select($this->orm, static::PROGRAMATOR_ROLE))->load('tech_book')->wherePK(2)->fetchOne();
+        $entity = (new Select($this->orm, self::PROGRAMATOR_ROLE))->load('tech_book')->wherePK(2)->fetchOne();
 
-        \Testo\Assert::notNull($entity->book);
-        \Testo\Assert::notNull($entity->tech_book);
+        Assert::notNull($entity->book);
+        Assert::notNull($entity->tech_book);
     }
 
     /**
      * Parent's relations should be removed or not removed with their parent
      */
-    #[\Testo\Test]
+    #[Test]
     public function testRemoveSubclassWithRelations(): void
     {
         /** @var Engineer $engineer */
-        $engineer = (new Select($this->orm, static::ENGINEER_ROLE))->loadSubclasses(false)->wherePK(2)->fetchOne();
+        $engineer = (new Select($this->orm, self::ENGINEER_ROLE))->loadSubclasses(false)->wherePK(2)->fetchOne();
 
         $this->captureWriteQueries();
         (new EntityManager($this->orm))->delete($engineer)->run();
@@ -92,16 +95,16 @@ final class ParentClassRelationsTest extends SimpleCasesTest
         (new EntityManager($this->orm))->delete($engineer)->run();
         $this->assertNumWrites(0);
 
-        \Testo\Assert::null((new Select($this->orm, static::PROGRAMATOR_ROLE))->wherePK(2)->fetchOne());
-        \Testo\Assert::null((new Select($this->orm, static::ENGINEER_ROLE))->loadSubclasses(false)->wherePK(2)->fetchOne());
+        Assert::null((new Select($this->orm, self::PROGRAMATOR_ROLE))->wherePK(2)->fetchOne());
+        Assert::null((new Select($this->orm, self::ENGINEER_ROLE))->loadSubclasses(false)->wherePK(2)->fetchOne());
         /** @var Employee $employee */
-        $employee = (new Select($this->orm, static::EMPLOYEE_ROLE))->loadSubclasses(false)->wherePK(2)->fetchOne();
+        $employee = (new Select($this->orm, self::EMPLOYEE_ROLE))->loadSubclasses(false)->wherePK(2)->fetchOne();
 
-        \Testo\Assert::notNull($employee);
-        \Testo\Assert::notNull($employee->book);
+        Assert::notNull($employee);
+        Assert::notNull($employee->book);
     }
 
-    #[\Testo\Lifecycle\BeforeTest]
+    #[BeforeTest]
     protected function setUp(): void
     {
         JtiBaseTest::setUp();
@@ -144,7 +147,7 @@ final class ParentClassRelationsTest extends SimpleCasesTest
         ], pk: ['id']);
 
         $this->getDatabase()->table('tool')->insertMultiple(
-            \array_keys(static::TOOL_1),
+            \array_keys(self::TOOL_1),
             [
                 self::TOOL_1,
                 self::TOOL_2,
@@ -153,7 +156,7 @@ final class ParentClassRelationsTest extends SimpleCasesTest
             ],
         );
         $this->getDatabase()->table('book')->insertMultiple(
-            \array_keys(static::BOOK_1),
+            \array_keys(self::BOOK_1),
             [
                 self::BOOK_1,
                 self::BOOK_2,
@@ -162,7 +165,7 @@ final class ParentClassRelationsTest extends SimpleCasesTest
             ],
         );
         $this->getDatabase()->table('employee')->insertMultiple(
-            \array_keys(static::EMPLOYEE_1),
+            \array_keys(self::EMPLOYEE_1),
             [
                 self::EMPLOYEE_1,
                 self::EMPLOYEE_2,
@@ -171,21 +174,21 @@ final class ParentClassRelationsTest extends SimpleCasesTest
             ],
         );
         $this->getDatabase()->table('engineer')->insertMultiple(
-            \array_keys(static::ENGINEER_2),
+            \array_keys(self::ENGINEER_2),
             [
                 self::ENGINEER_2,
                 self::ENGINEER_4,
             ],
         );
         $this->getDatabase()->table('programator')->insertMultiple(
-            \array_keys(static::PROGRAMATOR_2),
+            \array_keys(self::PROGRAMATOR_2),
             [
                 self::PROGRAMATOR_2,
                 self::PROGRAMATOR_4,
             ],
         );
         $this->getDatabase()->table('manager')->insertMultiple(
-            \array_keys(static::MANAGER_1),
+            \array_keys(self::MANAGER_1),
             [
                 self::MANAGER_1,
                 self::MANAGER_3,
@@ -196,7 +199,7 @@ final class ParentClassRelationsTest extends SimpleCasesTest
     protected function getSchemaArray(): array
     {
         return [
-            static::EMPLOYEE_ROLE => [
+            self::EMPLOYEE_ROLE => [
                 SchemaInterface::ENTITY => Employee::class,
                 SchemaInterface::MAPPER => PromiseMapper::class,
                 SchemaInterface::DATABASE => 'default',
@@ -208,7 +211,7 @@ final class ParentClassRelationsTest extends SimpleCasesTest
                 SchemaInterface::RELATIONS => [
                     'book' => [
                         Relation::TYPE => Relation::REFERS_TO,
-                        Relation::TARGET => static::BOOK_ROLE,
+                        Relation::TARGET => self::BOOK_ROLE,
                         Relation::LOAD => Relation::LOAD_EAGER,
                         Relation::SCHEMA => [
                             Relation::CASCADE => true,
@@ -219,12 +222,12 @@ final class ParentClassRelationsTest extends SimpleCasesTest
                     ],
                 ],
             ],
-            static::ENGINEER_ROLE => [
+            self::ENGINEER_ROLE => [
                 SchemaInterface::ENTITY => Engineer::class,
                 SchemaInterface::MAPPER => PromiseMapper::class,
                 SchemaInterface::DATABASE => 'default',
                 SchemaInterface::TABLE => 'engineer',
-                SchemaInterface::PARENT => static::EMPLOYEE_ROLE,
+                SchemaInterface::PARENT => self::EMPLOYEE_ROLE,
                 SchemaInterface::PRIMARY_KEY => 'id',
                 SchemaInterface::COLUMNS => ['id', 'level', 'tech_book_id'],
                 SchemaInterface::TYPECAST => ['id' => 'int', 'level' => 'int', 'tech_book_id' => 'int'],
@@ -232,7 +235,7 @@ final class ParentClassRelationsTest extends SimpleCasesTest
                 SchemaInterface::RELATIONS => [
                     'tech_book' => [
                         Relation::TYPE => Relation::REFERS_TO,
-                        Relation::TARGET => static::BOOK_ROLE,
+                        Relation::TARGET => self::BOOK_ROLE,
                         Relation::SCHEMA => [
                             Relation::CASCADE => true,
                             Relation::NULLABLE => true,
@@ -242,7 +245,7 @@ final class ParentClassRelationsTest extends SimpleCasesTest
                     ],
                     'tools' => [
                         Relation::TYPE => Relation::HAS_MANY,
-                        Relation::TARGET => static::TOOL_ROLE,
+                        Relation::TARGET => self::TOOL_ROLE,
                         Relation::SCHEMA => [
                             Relation::CASCADE => true,
                             Relation::NULLABLE => false,
@@ -252,31 +255,31 @@ final class ParentClassRelationsTest extends SimpleCasesTest
                     ],
                 ],
             ],
-            static::PROGRAMATOR_ROLE => [
+            self::PROGRAMATOR_ROLE => [
                 SchemaInterface::ENTITY => Programator::class,
                 SchemaInterface::MAPPER => PromiseMapper::class,
                 SchemaInterface::DATABASE => 'default',
                 SchemaInterface::TABLE => 'programator',
-                SchemaInterface::PARENT => static::ENGINEER_ROLE,
+                SchemaInterface::PARENT => self::ENGINEER_ROLE,
                 SchemaInterface::PRIMARY_KEY => 'id',
                 SchemaInterface::COLUMNS => ['id', 'language'],
                 SchemaInterface::TYPECAST => ['id' => 'int'],
                 SchemaInterface::SCHEMA => [],
                 SchemaInterface::RELATIONS => [],
             ],
-            static::MANAGER_ROLE => [
+            self::MANAGER_ROLE => [
                 SchemaInterface::ENTITY => Manager::class,
                 SchemaInterface::MAPPER => PromiseMapper::class,
                 SchemaInterface::DATABASE => 'default',
                 SchemaInterface::TABLE => 'manager',
-                SchemaInterface::PARENT => static::EMPLOYEE_ROLE,
+                SchemaInterface::PARENT => self::EMPLOYEE_ROLE,
                 SchemaInterface::PRIMARY_KEY => 'id',
                 SchemaInterface::COLUMNS => ['id', 'rank'],
                 SchemaInterface::TYPECAST => ['id' => 'int'],
                 SchemaInterface::SCHEMA => [],
                 SchemaInterface::RELATIONS => [],
             ],
-            static::BOOK_ROLE => [
+            self::BOOK_ROLE => [
                 SchemaInterface::ENTITY => Book::class,
                 SchemaInterface::MAPPER => PromiseMapper::class,
                 SchemaInterface::DATABASE => 'default',
@@ -287,7 +290,7 @@ final class ParentClassRelationsTest extends SimpleCasesTest
                 SchemaInterface::SCHEMA => [],
                 SchemaInterface::RELATIONS => [],
             ],
-            static::TOOL_ROLE => [
+            self::TOOL_ROLE => [
                 SchemaInterface::ENTITY => Tool::class,
                 SchemaInterface::MAPPER => PromiseMapper::class,
                 SchemaInterface::DATABASE => 'default',

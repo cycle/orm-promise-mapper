@@ -7,13 +7,13 @@ namespace Cycle\ORM\PromiseMapper\Tests\Feature\Common\Relation\BelongsTo;
 use Cycle\ORM\PromiseMapper\PromiseMapper;
 use Cycle\ORM\PromiseMapper\Tests\Fixtures\Profile;
 use Cycle\ORM\PromiseMapper\Tests\Fixtures\User;
-use Cycle\ORM\PromiseMapper\Tests\Support\PromiseMapperTestCase;
 use Cycle\ORM\Relation;
 use Cycle\ORM\Schema;
+use Testo\Lifecycle\BeforeTest;
 
 final class BelongsToPromiseMapperRenamedFieldsTest extends BelongsToPromiseMapperTest
 {
-    #[\Testo\Lifecycle\BeforeTest]
+    #[BeforeTest]
     protected function setUp(): void
     {
         $this->makeTable('user', [

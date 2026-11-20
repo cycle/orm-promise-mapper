@@ -14,16 +14,19 @@ use Cycle\ORM\Reference\Promise;
 use Cycle\ORM\Relation;
 use Cycle\ORM\Schema;
 use Cycle\ORM\Select;
+use Testo\Assert;
+use Testo\Lifecycle\BeforeTest;
+use Testo\Test;
 
 class BelongsToPromiseMapperTest extends PromiseMapperTestCase
 {
-    #[\Testo\Test]
+    #[Test]
     public function testFetchRelation(): void
     {
         $selector = new Select($this->orm, Profile::class);
         $selector->orderBy('profile.id');
 
-        \Testo\Assert::equals($selector->fetchData(), [
+        Assert::equals($selector->fetchData(), [
             [
                 'id' => 1,
                 'user_id' => 1,
@@ -42,7 +45,7 @@ class BelongsToPromiseMapperTest extends PromiseMapperTestCase
         ]);
     }
 
-    #[\Testo\Test]
+    #[Test]
     public function testFetchPromises(): void
     {
         $selector = new Select($this->orm, Profile::class);
@@ -57,26 +60,26 @@ class BelongsToPromiseMapperTest extends PromiseMapperTestCase
         $aData = $this->extractEntity($a);
         $bData = $this->extractEntity($b);
 
-        \Testo\Assert::instanceOf($aData['user'], Promise::class);
-        \Testo\Assert::instanceOf($bData['user'], Promise::class);
-        \Testo\Assert::instanceOf($userA, Promise::class);
-        \Testo\Assert::instanceOf($userB, Promise::class);
-        \Testo\Assert::null($c->user);
+        Assert::instanceOf($aData['user'], Promise::class);
+        Assert::instanceOf($bData['user'], Promise::class);
+        Assert::instanceOf($userA, Promise::class);
+        Assert::instanceOf($userB, Promise::class);
+        Assert::null($c->user);
         $userA->resolve();
         $userB->resolve();
 
-        \Testo\Assert::instanceOf($userA->fetch(), User::class);
-        \Testo\Assert::null($userB->fetch());
+        Assert::instanceOf($userA->fetch(), User::class);
+        Assert::null($userB->fetch());
 
         $this->captureReadQueries();
-        \Testo\Assert::same($userA->fetch(), $userA->fetch());
-        \Testo\Assert::null($userB->fetch());
+        Assert::same($userA->fetch(), $userA->fetch());
+        Assert::null($userB->fetch());
         $this->assertNumReads(0);
 
-        \Testo\Assert::equals($userA->fetch()->email, 'hello@world.com');
+        Assert::equals($userA->fetch()->email, 'hello@world.com');
     }
 
-    #[\Testo\Test]
+    #[Test]
     public function testFetchPromisesFromHeap(): void
     {
         $selector = new Select($this->orm, Profile::class);
@@ -91,29 +94,29 @@ class BelongsToPromiseMapperTest extends PromiseMapperTestCase
         $aData = $this->extractEntity($a);
         $bData = $this->extractEntity($b);
 
-        \Testo\Assert::instanceOf($aData['user'], Promise::class);
-        \Testo\Assert::instanceOf($bData['user'], Promise::class);
-        \Testo\Assert::instanceOf($a->user, Promise::class);
-        \Testo\Assert::instanceOf($b->user, Promise::class);
-        \Testo\Assert::null($c->user);
+        Assert::instanceOf($aData['user'], Promise::class);
+        Assert::instanceOf($bData['user'], Promise::class);
+        Assert::instanceOf($a->user, Promise::class);
+        Assert::instanceOf($b->user, Promise::class);
+        Assert::null($c->user);
 
         // warm up
         (new Select($this->orm, User::class))->fetchAll();
 
         $this->captureReadQueries();
-        \Testo\Assert::instanceOf($userA->fetch(), User::class);
-        \Testo\Assert::same($userA->fetch(), $userA->getValue());
+        Assert::instanceOf($userA->fetch(), User::class);
+        Assert::same($userA->fetch(), $userA->getValue());
         $this->assertNumReads(0);
 
         // invalid object can't be cached
         $this->captureReadQueries();
-        \Testo\Assert::null($userB->fetch());
+        Assert::null($userB->fetch());
         $this->assertNumReads(1);
 
-        \Testo\Assert::equals($userA->fetch()->email, 'hello@world.com');
+        Assert::equals($userA->fetch()->email, 'hello@world.com');
     }
 
-    #[\Testo\Test]
+    #[Test]
     public function testNoWriteOperations(): void
     {
         $selector = new Select($this->orm, Profile::class);
@@ -126,7 +129,7 @@ class BelongsToPromiseMapperTest extends PromiseMapperTestCase
         $this->assertNumWrites(0);
     }
 
-    #[\Testo\Test]
+    #[Test]
     public function testEditPromised(): void
     {
         $p = (new Select($this->orm, Profile::class))
@@ -147,10 +150,10 @@ class BelongsToPromiseMapperTest extends PromiseMapperTestCase
         /** @var Promise $promise */
         $promise = $p->user;
 
-        \Testo\Assert::same($promise->fetch()->balance, 400.0);
+        Assert::same($promise->fetch()->balance, 400.0);
     }
 
-    #[\Testo\Lifecycle\BeforeTest]
+    #[BeforeTest]
     protected function setUp(): void
     {
         $this->makeTable('user', [

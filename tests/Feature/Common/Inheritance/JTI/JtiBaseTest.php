@@ -9,10 +9,11 @@ use Cycle\ORM\Config\RelationConfig;
 use Cycle\ORM\Factory;
 use Cycle\ORM\PromiseMapper\Tests\Support\PromiseMapperTestCase;
 use Cycle\ORM\Schema;
+use Testo\Lifecycle\BeforeTest;
 
 abstract class JtiBaseTest extends PromiseMapperTestCase
 {
-    #[\Testo\Lifecycle\BeforeTest]
+    #[BeforeTest]
     protected function setUp(): void
     {
         $factory = new Factory(
