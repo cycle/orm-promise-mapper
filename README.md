@@ -18,6 +18,7 @@
 [![Psalm Level](https://shepherd.dev/github/cycle/orm-promise-mapper/level.svg)](https://shepherd.dev/github/cycle/orm-promise-mapper)
 [![Type Coverage](https://shepherd.dev/github/cycle/orm-promise-mapper/coverage.svg)](https://shepherd.dev/github/cycle/orm-promise-mapper)
 [![Codecov](https://codecov.io/gh/cycle/orm-promise-mapper/branch/1.x/graph/badge.svg)](https://codecov.io/gh/cycle/orm-promise-mapper)
+[![Mutation testing badge](https://img.shields.io/endpoint?style=flat-square&url=https%3A%2F%2Fbadge-api.stryker-mutator.io%2Fgithub.com%2Fcycle%2Form-promise-mapper%2F1.x)](https://dashboard.stryker-mutator.io/reports/github.com/cycle/orm-promise-mapper/1.x)
 
 </div>
 
