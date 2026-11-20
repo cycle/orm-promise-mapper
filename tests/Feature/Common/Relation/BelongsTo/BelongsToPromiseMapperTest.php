@@ -117,6 +117,16 @@ class BelongsToPromiseMapperTest extends PromiseMapperTestCase
     }
 
     #[Test]
+    public function testRelatedEntityAlreadyInHeapIsSetDirectly(): void
+    {
+        $user = (new Select($this->orm, User::class))->wherePK(1)->fetchOne();
+
+        $profile = (new Select($this->orm, Profile::class))->wherePK(1)->fetchOne();
+
+        Assert::same($profile->user, $user);
+    }
+
+    #[Test]
     public function testNoWriteOperations(): void
     {
         $selector = new Select($this->orm, Profile::class);
