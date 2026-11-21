@@ -7,12 +7,11 @@ namespace Cycle\ORM\PromiseMapper;
 use Cycle\ORM\Mapper\DatabaseMapper;
 use Cycle\ORM\Mapper\Traits\SingleTableTrait;
 use Cycle\ORM\ORMInterface;
+use Cycle\ORM\PromiseMapper\Internal\Hydrator;
 use Cycle\ORM\Reference\Promise;
 use Cycle\ORM\Reference\ReferenceInterface;
 use Cycle\ORM\SchemaInterface;
 use Doctrine\Instantiator;
-use Laminas\Hydrator\HydratorInterface;
-use Laminas\Hydrator\ReflectionHydrator;
 
 /**
  * Provide the ability to carry data over the specific class instances. Supports table inheritance using
@@ -24,8 +23,8 @@ class PromiseMapper extends DatabaseMapper
 
     protected string $entity;
     protected array $children = [];
-    protected HydratorInterface $hydrator;
     protected Instantiator\Instantiator $instantiator;
+    private readonly Hydrator $hydrator;
 
     public function __construct(ORMInterface $orm, string $role)
     {
@@ -35,7 +34,7 @@ class PromiseMapper extends DatabaseMapper
         $this->entity = $this->schema->define($role, SchemaInterface::ENTITY);
         $this->children = $this->schema->define($role, SchemaInterface::CHILDREN) ?? [];
         $this->discriminator = $this->schema->define($role, SchemaInterface::DISCRIMINATOR) ?? $this->discriminator;
-        $this->hydrator = new ReflectionHydrator();
+        $this->hydrator = new Hydrator();
 
         $this->instantiator = new Instantiator\Instantiator();
     }
@@ -66,7 +65,7 @@ class PromiseMapper extends DatabaseMapper
                 : new Promise($relation, $v);
         }
 
-        return $this->hydrator->hydrate($data, $entity);
+        return $this->hydrator->hydrate($entity, $data);
     }
 
     #[\Override]
