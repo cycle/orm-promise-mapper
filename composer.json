@@ -6,7 +6,6 @@
         "php": ">=8.2",
         "cycle/orm": "^2.19",
         "doctrine/instantiator": "^2.0",
-        "laminas/laminas-hydrator": "^4.19 || ^5.0",
         "symfony/polyfill-php83": "^1.33"
     },
     "require-dev": {
