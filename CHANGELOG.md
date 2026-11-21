@@ -1,5 +1,22 @@
 # Changelog
 
+## [2.0.0](https://github.com/cycle/orm-promise-mapper/compare/1.1.0...2.0.0) (2026-11-21)
+
+
+### ⚠ BREAKING CHANGES
+
+* hydrate entities without laminas/laminas-hydrator ([#26](https://github.com/cycle/orm-promise-mapper/issues/26))
+* the protected PromiseMapper::$hydrator property is gone.
+
+### Features
+
+* hydrate entities without laminas/laminas-hydrator ([#26](https://github.com/cycle/orm-promise-mapper/issues/26)) ([ede7d22](https://github.com/cycle/orm-promise-mapper/commit/ede7d22a0bd38fad1e925e58cdff23d4971ec87d))
+
+
+### Bug Fixes
+
+* skip uninitialized typed properties when extracting an entity ([ede7d22](https://github.com/cycle/orm-promise-mapper/commit/ede7d22a0bd38fad1e925e58cdff23d4971ec87d))
+
 ## [1.1.0](https://github.com/cycle/orm-promise-mapper/compare/1.0.2...1.1.0) (2026-11-21)
 
 
