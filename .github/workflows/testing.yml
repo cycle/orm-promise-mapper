@@ -21,8 +21,6 @@ jobs:
     uses: cycle/gh-actions/.github/workflows/testo.yml@v4.2.0
     with:
       coverage: true
-      # laminas/laminas-hydrator and laminas/laminas-serializer cap PHP at 8.5: drop the upper bound only.
-      composer-options: --ignore-platform-req=php+
     secrets: inherit
 
 ...
